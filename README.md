@@ -20,7 +20,7 @@
 
 ****
 
-## # HOW TO Use it :
+### How To Use it :
 - User just need to download the file, and run the Project.py, on local system.
 - After running a file dialog box will appear, though which we need to select the pbix file, of which we need the report details.
 - After selecting the files, in the backend the python script will follow the below steps inorder to extract details:
