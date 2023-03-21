@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "PyPbitAutomator"
+version = "0.0.3"
+authors = [
+  { name="Akash Rajak", email="aakashrajak02@gmail.com" },
+]
+description = "Extract Measures and its Description, Source Information, and Relationships from Power BI template."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
