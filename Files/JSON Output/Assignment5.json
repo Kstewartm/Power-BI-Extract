@@ -333,19 +333,19 @@
                                                 "let",
                                                 "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\MAQ\\Downloads\\Problem Set 5\\Problem Set 5\\Problem Set 5\\Literacy.xlsx\"), null, true),",
                                                 "    LiteracyTable_Table = Source{[Item=\"LiteracyTable\",Kind=\"Table\"]}[Data],",
-                                                "    //This changes the field types of the LiteracyTable table to the specified data types.",
+                                                "    //This changes the data types of the columns in the LiteracyTable_Table to integers, text, or numbers.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(LiteracyTable_Table,{{\"State Code\", Int64.Type}, {\"State Name\", type text}, {\"District Code\", Int64.Type}, {\"Name of Urban Agglomeration/City\", type text}, {\"Level\", type text}, {\"Population \", Int64.Type}, {\"Population(Male)\", Int64.Type}, {\"Population(Female)\", Int64.Type}, {\"0-6 Population\", Int64.Type}, {\"Literates\", Int64.Type}, {\"Literates(Male)\", Int64.Type}, {\"Literates(Female)\", Int64.Type}, {\"Sex Ratio\", Int64.Type}, {\"Child Sex Ratio (0-6 Years\", Int64.Type}, {\"Effective Literacy Rate (7+ Pop)\", type number}, {\"Literacy Rate(Male)\", type number}, {\"Literacy Rate (Female)\", type number}}),",
-                                                "    //\"Replaced Errors\" replaces any cells with the value of \"State Code\" and sets it to 33.",
+                                                "    //This sentence means that the \"Replaced Errors\" table was created by changing the type and replacing the \"State Code\" value with 33.",
                                                 "    #\"Replaced Errors\" = Table.ReplaceErrorValues(#\"Changed Type\", {{\"State Code\", 33}}),",
-                                                "    //This sentence means that the table \"Replaced Errors\" was renamed and the column \"Name of Urban Agglomeration/City\" was changed to \"City\".",
+                                                "    //Renamed Columns means that the column labelled \"Name of Urban Agglomeration/City\" has been changed to \"City\" for the table \"Replaced Errors\".",
                                                 "    #\"Renamed Columns\" = Table.RenameColumns(#\"Replaced Errors\",{{\"Name of Urban Agglomeration/City\", \"City\"}}),",
-                                                "    //\"Split Column by Delimiter\" means to separate the contents of a column into two new columns based on a specified delimiter.",
+                                                "    //Split a \"City\" column into two columns named \"City.1\" and \"City.2\" based on spaces between words.",
                                                 "    #\"Split Column by Delimiter\" = Table.SplitColumn(#\"Renamed Columns\", \"City\", Splitter.SplitTextByEachDelimiter({\" \"}, QuoteStyle.Csv, false), {\"City.1\", \"City.2\"}),",
-                                                "    //Table.TransformColumnTypes changes the data type of the City.1 and City.2 columns from whatever it was before to text.",
+                                                "    //Table.TransformColumnTypes takes a data table as an input and transforms the type of certain columns from one type to another.",
                                                 "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Split Column by Delimiter\",{{\"City.1\", type text}, {\"City.2\", type text}}),",
-                                                "    //Removing the City.2 column from the ChangedType1 table.",
+                                                "    //This line of code removes the \"City.2\" column from the table \"Changed Type1\".",
                                                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type1\",{\"City.2\"}),",
-                                                "    //This renames the two columns \"City.1\" and \"State Name\" to \"City\" and \"State\" respectively.",
+                                                "    //The column names \"City.1\" and \"State Name\" were changed to \"City\" and \"State\", respectively.",
                                                 "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Removed Columns\",{{\"City.1\", \"City\"}, {\"State Name\", \"State\"}})",
                                                 "in",
                                                 "    #\"Renamed Columns1\""
@@ -356,27 +356,27 @@
                         "measures": [
                               {
                                     "name": "Number of States",
-                                    "expression": "DISTINCTCOUNT(LiteracyTable[State])",
+                                    "expression": "\nDISTINCTCOUNT(LiteracyTable[State])",
                                     "formatString": "0",
                                     "lineageTag": "783001f6-b374-4462-97a0-0557cdfff5ae",
                                     "dataType": "int64",
-                                    "description": "This calculation is used to count the unique states from a LiteracyTable. It will count the states only once, even if they appear more than once in the table. This is useful to determine how many distinct states are represented in the Literacy Table."
+                                    "description": "The DISTINCTCOUNT function in LiteracyTable[State] is used to count the unique occurrences of states in the table. This helps provide an understanding of how many different states are represented in the Literacy Table."
                               },
                               {
                                     "name": "Number of Cities",
-                                    "expression": "COUNTAX(FILTER(LiteracyTable, 'LiteracyTable'[Level] = \"City\"), [City])",
+                                    "expression": "\nCOUNTAX(\n    FILTER(\n        LiteracyTable,\n        'LiteracyTable'[Level] = \"City\"\n    ), \n    [City]\n)",
                                     "formatString": "0",
                                     "lineageTag": "e4d3a8b6-359f-4906-8928-4dbb10ce15b2",
                                     "dataType": "int64",
-                                    "description": "This calculation counts the number of cities that have a literacy level of \"City\". It looks at the LiteracyTable and filters it based on any rows that have the Level column equal to \"City\" and then it counts them."
+                                    "description": "This calculation counts the number of cities in the LiteracyTable that have a Level value of \"City\"."
                               },
                               {
                                     "name": "Number of UA",
-                                    "expression": "COUNTAX(FILTER(LiteracyTable, 'LiteracyTable'[Level] = \"UA\"), [City])",
+                                    "expression": "\nCOUNTAX(\n    FILTER(\n        LiteracyTable, \n        LiteracyTable[Level] = \"UA\"\n    ), \n    [City]\n)",
                                     "formatString": "0",
                                     "lineageTag": "4dea3ee7-2786-43b5-9501-3c4352c0d692",
                                     "dataType": "int64",
-                                    "description": "This calculation is counting the number of cities in a literacy table where the literacy level is \"UA,\" or Unavailable. It's using a filter to only count values where the Level is UA, and it's counting the City column in that filtered table."
+                                    "description": "This calculation counts the number of unique cities in a literacy table for all records with a Level of \"UA\". It tells us how many cities have a literacy level of \"UA\"."
                               }
                         ],
                         "hierarchies": [

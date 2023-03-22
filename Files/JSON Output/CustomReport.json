@@ -183,7 +183,7 @@
                                                 "let",
                                                 "    Source = Excel.Workbook(Web.Contents(\"https://testmaq-my.sharepoint.com/personal/pragyag_maqsoftware_com/Documents/Assignment6.xlsx\"), null, true),",
                                                 "    Source_Table = Source{[Item=\"Source\",Kind=\"Table\"]}[Data],",
-                                                "    //\"Changed Type\" is used to convert certain column types in the Source_Table to integer, text, and other datatypes.",
+                                                "    //This changes the data types of the columns in the source table to \"Table No\" as Int64, \"Table Name\" as text, \"Table Mode\" as text, \"Table Type\" as text, \"Table Source\" as text, \"Original Table Name\" as text, \"Table Query\" as",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(Source_Table,{{\"Table No\", Int64.Type}, {\"Table Name\", type text}, {\"Table Mode\", type text}, {\"Table Type\", type text}, {\"Table Source\", type text}, {\"Original Table Name\", type text}, {\"Table Query\", type text}, {\"Modification\", type text}, {\"Modification Description\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -542,7 +542,7 @@
                                                 "let",
                                                 "    Source = Excel.Workbook(Web.Contents(\"https://testmaq-my.sharepoint.com/personal/pragyag_maqsoftware_com/Documents/Assignment6.xlsx\"), null, true),",
                                                 "    Table1_Table = Source{[Item=\"Table1\",Kind=\"Table\"]}[Data],",
-                                                "    //\"Changed Type\" is a function that changes the data type of four columns in a table.",
+                                                "    //Change the data types of the columns in Table1 to Text for \"Measure Name\", \"Measure Expression\", \"Measure Data Type\", and \"Measure Description\".",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(Table1_Table,{{\"Measure Name\", type text}, {\"Measure Expression\", type text}, {\"Measure Data Type\", type text}, {\"Measure Description\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -709,7 +709,7 @@
                                                 "    Source = Excel.Workbook(Web.Contents(\"https://testmaq-my.sharepoint.com/personal/pragyag_maqsoftware_com/Documents/Assignment6.xlsx\"), null, true),",
                                                 "    Relationships_Sheet = Source{[Item=\"Relationships\",Kind=\"Sheet\"]}[Data],",
                                                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Relationships_Sheet, [PromoteAllScalars=true]),",
-                                                "    //This changes the data type of the column \"No relationships present in this file\" to any type.",
+                                                "    //This changes the data type of the column \"No relationships present in this file\" to \"any\".",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"No relationships present in this file\", type any}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -898,7 +898,7 @@
                                                 "    Source = Excel.Workbook(Web.Contents(\"https://testmaq-my.sharepoint.com/personal/pragyag_maqsoftware_com/Documents/Assignment6.xlsx\"), null, true),",
                                                 "    #\"Source Information_Sheet\" = Source{[Item=\"Source Information\",Kind=\"Sheet\"]}[Data],",
                                                 "    #\"Promoted Headers\" = Table.PromoteHeaders(#\"Source Information_Sheet\", [PromoteAllScalars=true]),",
-                                                "    //This changes the data types of the columns in the table \"Promoted Headers\" to Int64 numbers, Text, or Text.",
+                                                "    //This sentence changes the data types of each column in the promoted headers table to different types, such as Int64 and text.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Table No\", Int64.Type}, {\"Table Name\", type text}, {\"Table Mode\", type text}, {\"Table Type\", type text}, {\"Table Source\", type text}, {\"Original Table Name\", type text}, {\"Table Query\", type text}, {\"Modification\", type text}, {\"Modification Description\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -1086,7 +1086,7 @@
                                                 "let",
                                                 "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\MAQ\\OneDrive - MAQ Software\\Documents\\Pragya Gautam\\Power BI model documenter using OpenAI\\Files\\EXCEL Output\\Assignment8.xlsx\"), null, true),",
                                                 "    Source_Table = Source{[Item=\"Source\",Kind=\"Table\"]}[Data],",
-                                                "    //This transformation changes the data types of the columns within the source table to the specified data types.",
+                                                "    //This sentence changes the data types of several columns in the source table to Int64, text, and text respectively.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(Source_Table,{{\"Table No\", Int64.Type}, {\"Table Name\", type text}, {\"Table Mode\", type text}, {\"Table Type\", type text}, {\"Table Source\", type text}, {\"Original Table Name\", type text}, {\"Table Query\", type text}, {\"Modification\", type text}, {\"Modification Description\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -1146,7 +1146,7 @@
                                                 "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\MAQ\\OneDrive - MAQ Software\\Documents\\Pragya Gautam\\Power BI model documenter using OpenAI\\Files\\EXCEL Output\\Assignment8.xlsx\"), null, true),",
                                                 "    Measures_Sheet = Source{[Item=\"Measures\",Kind=\"Sheet\"]}[Data],",
                                                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Measures_Sheet, [PromoteAllScalars=true]),",
-                                                "    //This changes the data type of the column \"No measures present in this file\" to any type.",
+                                                "    //This changes the data type of the column \"No measures presented in this file\" to any type.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"No measures present in this file\", type any}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -1335,7 +1335,7 @@
                                                 "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\MAQ\\OneDrive - MAQ Software\\Documents\\Pragya Gautam\\Power BI model documenter using OpenAI\\Files\\EXCEL Output\\Assignment8.xlsx\"), null, true),",
                                                 "    #\"Source Information_Sheet\" = Source{[Item=\"Source Information\",Kind=\"Sheet\"]}[Data],",
                                                 "    #\"Promoted Headers\" = Table.PromoteHeaders(#\"Source Information_Sheet\", [PromoteAllScalars=true]),",
-                                                "    //This sentence changes the data type of the various columns of the \"Promoted Headers\" table to the specified data types (Integer, Text, or Text again).",
+                                                "    //The command is changing each column's type in a table to a specified type.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Table No\", Int64.Type}, {\"Table Name\", type text}, {\"Table Mode\", type text}, {\"Table Type\", type text}, {\"Table Source\", type text}, {\"Original Table Name\", type text}, {\"Table Query\", type text}, {\"Modification\", type text}, {\"Modification Description\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -1395,7 +1395,7 @@
                                                 "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\MAQ\\OneDrive - MAQ Software\\Documents\\Pragya Gautam\\Power BI model documenter using OpenAI\\Files\\EXCEL Output\\Assignment8.xlsx\"), null, true),",
                                                 "    Relationships_Sheet = Source{[Item=\"Relationships\",Kind=\"Sheet\"]}[Data],",
                                                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Relationships_Sheet, [PromoteAllScalars=true]),",
-                                                "    //This code changes the \"No relationships present in this file\" column type to \"any\".",
+                                                "    //This changes the data type of the column labeled \"No relationships present in this file\" to any.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"No relationships present in this file\", type any}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -2495,9 +2495,9 @@
                                           "expression": [
                                                 "let",
                                                 "    Source = Csv.Document(File.Contents(\"C:\\Users\\MAQ\\Downloads\\data.csv\"),[Delimiter=\",\", Columns=9, Encoding=65001, QuoteStyle=QuoteStyle.None]),",
-                                                "    //\"Promoted Headers\" is a function that takes the headers of a source table and promotes them to become columns with their associated values.",
+                                                "    //Promoted Headers is a function that takes the data from the provided source, and creates an Excel table with all scalar values as headers.",
                                                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),",
-                                                "    //This command changes the data types of different columns in the table to a specified type.",
+                                                "    //The column types in the table were changed to text, datetime, number and text for the respective columns.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Name\", type text}, {\"Employee ID\", type text}, {\"Project Manager\", type text}, {\"Specialization Name\", type text}, {\"Completion Or Target Date\", type datetime}, {\"Is LDP Goal\", type text}, {\"LDP Completion Risk\", type text}, {\"SpecializationPercentage\", type number}, {\"First Result\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""

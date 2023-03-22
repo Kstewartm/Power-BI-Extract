@@ -2007,7 +2007,7 @@
                                                 "let",
                                                 "    Source = Sql.Database(\"MAQN0366\\SQLEXPRESS\", \"AdventureWorks2012\"),",
                                                 "    Sales_SalesOrderDetail = Source{[Schema=\"Sales\",Item=\"SalesOrderDetail\"]}[Data],",
-                                                "    //Round the values in the \"LineTotal\" column to two decimal places.",
+                                                "    //Rounding off the LineTotal column in the Sales_SalesOrderDetail table to two decimal places.",
                                                 "    #\"Rounded Off\" = Table.TransformColumns(Sales_SalesOrderDetail,{{\"LineTotal\", each Number.Round(_, 2), type number}})",
                                                 "in",
                                                 "    #\"Rounded Off\""
@@ -2018,7 +2018,7 @@
                         "measures": [
                               {
                                     "name": "ProjectedSales",
-                                    "expression": "SUM('Sales SalesOrderDetail'[DerivedLineTotal])",
+                                    "expression": "\nSUM (\n    'Sales SalesOrderDetail'[DerivedLineTotal]\n)",
                                     "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
                                     "lineageTag": "a1c7c85b-cbc4-4330-a7d6-c8dda023e3f6",
                                     "dataType": "decimal",
@@ -2032,7 +2032,7 @@
                                                 "value": "[\"FormatString\"]"
                                           }
                                     ],
-                                    "description": "This calculation sums up the total line items from the Sales SalesOrderDetail table. This value can be used to determine the total sales in that table."
+                                    "description": "This calculation is essentially adding up all of the derived line totals from a sales salesorderdetail table. This would allow a business to know total sales for all of the sales lines for a specific sales order."
                               }
                         ],
                         "annotations": [

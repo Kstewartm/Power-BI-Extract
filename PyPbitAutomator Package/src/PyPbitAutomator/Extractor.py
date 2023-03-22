@@ -21,7 +21,7 @@ from tkinter import filedialog, Tk
 from tkinter.filedialog import askdirectory
 import shutil
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 
 def xls_extract(data, file, base_file_name, json_path):
@@ -32,34 +32,45 @@ def xls_extract(data, file, base_file_name, json_path):
         if 'measures' in t:
             list_measures = t['measures']
             for i in list_measures:
-                exp = ""
-                # print(type(i['expression']))
                 if (type(i['expression']) is list):
-                    # if type(i['expression']) == 'list':
-                    exp = " ".join(i['expression'][0:]).strip()
+                    exp = " ".join(i['expression'][0:])
                 else:
-                    exp = i['expression']
+                    exp = str(i['expression'])
                 prompt = "Explain the following calculation in a few sentences in simple business terms without using DAX function names: " + exp
                 completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=64)
                 i['description'] = completion.choices[0]['text'].strip()
                 cnt += 1
                 if (cnt == 1):
-                    ws.append(['Measure Name', 'Measure Expression', 'Measure Data Type', 'Measure Description'])
-                ws.append([i['name'], exp, i['dataType'] if 'dataType' in i else "", i['description']])
+                    ws.append(['Measure Name', 'Measure Expression', 'Measure Data Type', 'Measure Folder',
+                               'Measure Description'])
+                # ws.append([i['name'], exp, i['dataType'] if 'dataType' in i else "", i['description']])
+                exp = ""
+                if (type(i['expression']) is list):
+                    exp = " ".join(i['expression'][0:])
+                else:
+                    exp = str(i['expression'])
+                # exp= i['name'] + "=" + exp
+                prompt = "Format this dax query: " + exp
+                completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=256)
+                i['expression'] = "\n" + completion.choices[0]['text'].strip()
+                ws.append([i['name'], i['expression'], i['dataType'] if 'dataType' in i else "",
+                           i['displayFolder'] if 'displayFolder' in i else "No Folder Defined", i['description']])
+
     if (cnt >= 1):
-        table = Table(displayName="Table1", ref="A1:D" + str(cnt + 1))
+        table = Table(displayName="Table1", ref="A1:E" + str(cnt + 1))
         ws.add_table(table)
         style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
                                showRowStripes=True, showColumnStripes=False)
         table.tableStyleInfo = style
         for col in ws.columns:
             for cell in col:
-                cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
+                cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True, wrapText=True)
 
         ws.column_dimensions["A"].width = 20
         ws.column_dimensions["B"].width = 30
         ws.column_dimensions["C"].width = 30
-        ws.column_dimensions["D"].width = 50
+        ws.column_dimensions["D"].width = 30
+        ws.column_dimensions["E"].width = 50
     else:
         ws.append(['No measures present in this file'])
         adjusted_width = (len('No measures present in this file') + 2) * 1.2
@@ -69,132 +80,148 @@ def xls_extract(data, file, base_file_name, json_path):
     i = 0
     if 'tables' in data['model']:
         source.append(
-            ['Table No', 'Table Name', 'Table Mode', 'Table Type', 'Table Source', 'Original Table Name', 'Table Query','Modification', 'Modification Description'])
+            ['Table No', 'Table Name', 'Table Mode', 'Table Type', 'Table Source', 'Original Table Name', 'Table Query',
+             'Modification', 'Modification Description'])
         for t in data['model']['tables']:
             if 'partitions' in t:
                 list_partitions = t['partitions']
-                List_source = (list_partitions[0]['source']['expression'])
-                expression = []
-                if List_source[0] == 'let':
-                    expression.append(List_source[0])
-                    name = list_partitions[0]['name'].split('-')[0]
-                    mode = str(list_partitions[0]['mode'])
-                    i += 1
-                    p = List_source[1]
-                    expression.append(List_source[1])
-                    Ttype = p.split("(")[0].split('= ')[1]
-
-                    if '"' in p:
-                        st = 0
-                        ed = len(p) - 1
-                        while (p[st] != '"'):
-                            st += 1
-                        while (p[ed] != '"'):
-                            ed -= 1
-
-                        TSource = p[st: ed + 1]
-                        if "Query=" in TSource:
-                            TSource = TSource.split("[Query")[0]
-                        if "Delimiter=" in TSource:
-                            TSource = TSource.split("),[Delimiter")[0]
-                    elif "Source" in p:
-                        TSource = p.split("=")[1]
-                    else:
-                        TSource = List_source[2]
-
-                    otname = ""
-                    if "Query=" in p:
-                        otname = p.replace("#(lf)", "")
-                        otname = otname.split("FROM")[1]
-                        if "WHERE" in otname:
-                            otname = otname.split("WHERE")[0]
-                        if "INNER JOIN" in otname:
-                            otname = otname.split("INNER JOIN")
-                            n = []
-                            for tname in otname:
-                                if 'ON' in tname:
-                                    n.append(tname.split("ON")[0])
-                                else:
-                                    n.append(tname)
-                            otname = ",\n".join(n[0:])
-                    elif "Sql." in p:
-                        if "Name" in List_source[2]:
-                            otname = List_source[3].split("=")[0].strip()
-                        else:
-                            otname = List_source[2].split("=")[0].strip()
-                    elif "Excel." in p:
-                        otname = List_source[2].split("=")[0].strip()
-                        otname = otname.replace("#", "")
-                    elif "Dataflows" in p:
-                        otname = List_source[5].split("=")[0].split("\"")[1].strip()
-                    else:
+                name = list_partitions[0]['name'].split('-')[0]
+                mode = str(list_partitions[0]['mode'])
+                if "DateTableTemplate" not in name and "LocalDateTable" not in name:
+                    if list_partitions[0]['source']['type'] == 'entity':
+                        Ttype = list_partitions[0]['source']['type']
+                        TSource = list_partitions[0]['source']['expressionSource']
+                        otname = list_partitions[0]['source']['entityName']
+                        i += 1
+                        source.append(
+                            [i, name, mode, Ttype, TSource, otname, "NO Query", "No Modification", "No Description"])
+                    elif list_partitions[0]['source']['type'] == 'calculated':
+                        List_source = (list_partitions[0]['source']['expression'])
+                        mode = str(list_partitions[0]['mode'])
+                        Ttype = "Calculated"
+                        TSource = "Calculated Table"
                         otname = name
-
-                    TQuery = ""
-                    if "Query=" in p:
-                        TQuery = p.split("Query=")[1]
-                        TQuery = TQuery.replace("#(lf)", " ")
-                    else:
-                        TQuery = "No Query"
-
-                    if "import" in mode:
-                        idx = -1
-                        for i1 in range(2, len(List_source)):
-                            if "Sheet" not in List_source[i1]:
-                                if len(List_source[i1]) > 5 and List_source[i1][4] == '#':
-                                    idx = i1
-                                    break
-                        for i1 in range(2, idx):
-                            expression.append(List_source[i1])
-                        Tmodification = ""
-                        Tdescription = ""
-                        completion = "No Description"
-                        if idx == -1:
-                            Tmodification = "No Modification"
-                            Tdescription = "No Description"
+                        if (type(List_source) is list):
+                            TQuery = " ".join(List_source[0:])
                         else:
-                            pr = 1
-                            for id in range(idx, len(List_source) - 2):
-                                try:
-                                    p1 = List_source[id].split("    ")[1].strip()
-                                except:
-                                    p1 = List_source[id].strip()
-                                if '//' not in p1:
-                                    Tmodification += str(pr) + ". " + p1 + '\n\n'
-                                    prompt = "Explain this in normal terms in one sentence: " + p1
-                                    completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt,
-                                                                          max_tokens=64)
-                                    to = completion.choices[0]['text'].strip().replace("\n", "")
-                                    Tdescription += str(
-                                        pr) + ". " + to if completion != 'No Description' else completion
-                                    Tdescription += '\n\n'
-                                    to = completion.choices[0]['text'].strip().replace("\n", "")
-                                    to = "//" + to
-                                    if completion != 'No Description':
-                                        expression.append("    " + to)
-                                    expression.append(List_source[id])
-                                    pr += 1
-                            expression.append(List_source[len(List_source) - 2])
-                            expression.append(List_source[len(List_source) - 1])
-                            t['partitions'][0]['source']['expression'] = expression
+                            TQuery = str(List_source)
+                        Tmodification = "No Modification"
+                        Tdescription = "DAX Query Description: \n"
+                        prompt = "Explain the following calculation in a few sentences in simple business terms without using DAX function names: " + TQuery
+                        completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=128)
+                        Tdescription += completion.choices[0]['text'].strip().replace("\n", "")
+                        t['description'] = Tdescription
+                        i += 1
                         source.append([i, name, mode, Ttype, TSource, otname, TQuery, Tmodification, Tdescription])
                     else:
-                        source.append(
-                            [i, name, mode, Ttype, TSource, otname, TQuery, "No Modification", "No Description"])
-                elif list_partitions[0]['source']['type'] == 'calculated':
-                    name = list_partitions[0]['name'].split('-')[0]
-                    mode = str(list_partitions[0]['mode'])
-                    Ttype = "Calculated"
-                    i += 1
-                    TSource = "Calculated Table"
-                    otname = name
-                    TQuery = " ".join(List_source[0:])
-                    Tmodification = "No Modification"
-                    Tdescription = "Query Description: \n"
-                    prompt = "Explain the following calculation in a few sentences in simple business terms without using DAX function names: " + TQuery
-                    completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=128)
-                    Tdescription += completion.choices[0]['text'].strip().replace("\n", "")
-                    source.append([i, name, mode, Ttype, TSource, otname, TQuery, Tmodification, Tdescription])
+                        List_source = (list_partitions[0]['source']['expression'])
+                        expression = []
+                        if List_source[0] == 'let':
+                            expression.append(List_source[0])
+                            name = list_partitions[0]['name'].split('-')[0]
+                            mode = str(list_partitions[0]['mode'])
+                            i += 1
+                            p = List_source[1]
+                            expression.append(List_source[1])
+                            Ttype = p.split("(")[0].split('= ')[1]
+                            if '"' in p:
+                                st = 0
+                                ed = len(p) - 1
+                                while (p[st] != '"'):
+                                    st += 1
+                                while (p[ed] != '"'):
+                                    ed -= 1
+                                TSource = p[st: ed + 1]
+                                if "Query=" in TSource:
+                                    TSource = TSource.split("[Query")[0]
+                                if "Delimiter=" in TSource:
+                                    TSource = TSource.split("),[Delimiter")[0]
+                            elif "Source" in p:
+                                TSource = p.split("=")[1]
+                            else:
+                                TSource = List_source[2]
+                        otname = ""
+                        if "Query=" in p:
+                            otname = p.replace("#(lf)", "")
+                            otname = otname.split("FROM")[1]
+                            if "WHERE" in otname:
+                                otname = otname.split("WHERE")[0]
+                            if "INNER JOIN" in otname:
+                                otname = otname.split("INNER JOIN")
+                                n = []
+                                for tname in otname:
+                                    if 'ON' in tname:
+                                        n.append(tname.split("ON")[0])
+                                    else:
+                                        n.append(tname)
+                                otname = ",\n".join(n[0:])
+                        elif "Sql." in p:
+                            if "Name" in List_source[2]:
+                                otname = List_source[3].split("=")[0].strip()
+                            else:
+                                otname = List_source[2].split("=")[0].strip()
+                        elif "Excel." in p:
+                            otname = List_source[2].split("=")[0].strip()
+                            otname = otname.replace("#", "")
+                        elif "Dataflows" in p:
+                            otname = List_source[5].split("=")[0].split("\"")[1].strip()
+                        else:
+                            otname = name
+
+                        TQuery = ""
+                        if "Query=" in p:
+                            TQuery = p.split("Query=")[1]
+                            TQuery = TQuery.replace("#(lf)", " ")
+                        else:
+                            TQuery = "No Query"
+
+                        if "import" in mode:
+                            idx = -1
+                            for i1 in range(2, len(List_source)):
+                                if "Sheet" not in List_source[i1]:
+                                    if len(List_source[i1]) > 5 and List_source[i1][4] == '#':
+                                        idx = i1
+                                        break
+                            for i1 in range(2, idx):
+                                expression.append(List_source[i1])
+                            Tmodification = ""
+                            Tdescription = ""
+                            completion = "No Description"
+                            if idx == -1:
+                                Tmodification = "No Modification"
+                                Tdescription = "No Description"
+                            else:
+                                pr = 1
+                                for id in range(idx, len(List_source) - 2):
+                                    try:
+                                        p1 = List_source[id].split("    ")[1].strip()
+                                    except:
+                                        p1 = List_source[id].strip()
+                                    if '//' not in p1:
+                                        Tmodification += str(pr) + ". " + p1 + '\n\n'
+                                        prompt = "Explain this in normal terms in one sentence: " + p1
+                                        completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt,
+                                                                              max_tokens=64)
+                                        to = completion.choices[0]['text'].strip().replace("\n", "")
+                                        Tdescription += str(
+                                            pr) + ". " + to if completion != 'No Description' else completion
+                                        Tdescription += '\n\n'
+                                        to = completion.choices[0]['text'].strip().replace("\n", "")
+                                        to = "//" + to
+                                        if completion != 'No Description':
+                                            expression.append("    " + to)
+                                        expression.append(List_source[id])
+                                        pr += 1
+                                expression.append(List_source[len(List_source) - 2])
+                                expression.append(List_source[len(List_source) - 1])
+                                t['partitions'][0]['source']['expression'] = expression
+                                i += 1
+                                source.append(
+                                    [i, name, mode, Ttype, TSource, otname, TQuery, Tmodification, Tdescription])
+                        else:
+                            i += 1
+                            source.append(
+                                [i, name, mode, Ttype, TSource, otname, TQuery, "No Modification", "No Description"])
 
         with codecs.open(json_path, 'w', 'utf-16-le') as f:
             json.dump(data, f, indent=4)
@@ -203,7 +230,8 @@ def xls_extract(data, file, base_file_name, json_path):
         table = Table(displayName="Source", ref="A1:I" + str(i))
         source.add_table(table)
 
-        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,showRowStripes=True, showColumnStripes=False)
+        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
+                               showRowStripes=True, showColumnStripes=False)
         table.tableStyleInfo = style
 
         for col in source.columns:
@@ -230,7 +258,9 @@ def xls_extract(data, file, base_file_name, json_path):
         for t in data['model']['relationships']:
             direction = ""
             cardinality = ""
-            if "joinOnDateBehavior" not in t:
+            x11 = t['fromTable'].split('_')
+            x12 = t['toTable'].split('_')
+            if (x11[0] != 'LocalDateTable' and x12[0] != 'LocalDateTable') and "joinOnDateBehavior" not in t:
                 cnt1 += 1
                 if "crossFilteringBehavior" in t:
                     direction = "Both Directional"
@@ -265,7 +295,8 @@ def xls_extract(data, file, base_file_name, json_path):
         if (cnt1 >= 1):
             table = Table(displayName="Relationships", ref="A1:G" + str(cnt1 + 1))
             relation.add_table(table)
-            style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,showRowStripes=True, showColumnStripes=False)
+            style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
+                                   showRowStripes=True, showColumnStripes=False)
             table.tableStyleInfo = style
 
             for col in relation.columns:
@@ -304,7 +335,7 @@ def xls_extract(data, file, base_file_name, json_path):
 
 
 def json_extract(file):
-    temp_dir = 'temp'
+    temp_dir = 'temporary'
     os.makedirs(temp_dir, exist_ok=True)
     dir_name = os.path.dirname(file)
     base_file_name = Path(file).stem
@@ -358,9 +389,10 @@ def json_extract(file):
 
 
 def api():
-    key = input("Enter your OpenAI API Secret Key: ")
+    key = input("Enter your OpenAI API Secret key: ")
     if (len(key) == len(openai.api_key)):
         openai.api_key = key
+
 
 def main():
     print("Do you want to select file or folder\n1. File\n2. Multiple Files\n3. Folder")
@@ -371,7 +403,7 @@ def main():
     if (op == 1):
         file = filedialog.askopenfilename(title="Select file")
         if (file != ""):
-            print("Currently Processing {" + str(Path(file).stem) + "}...")
+            print("Currently Processing {" + str(Path(file).stem) + ".pbit}...")
             json_extract(file)
         else:
             print("No File Selected")
@@ -379,7 +411,7 @@ def main():
         files = filedialog.askopenfilenames(title="Select files")
         if (files != ""):
             for f in files:
-                print("Currently Processing {" + str(Path(f).stem) + "}...")
+                print("Currently Processing {" + str(Path(f).stem) + ".pbit}...")
                 json_extract(f)
         else:
             print("No Files Selected.")

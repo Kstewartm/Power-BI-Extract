@@ -21,9 +21,10 @@ from tkinter import filedialog, Tk
 from tkinter.filedialog import askdirectory
 import shutil
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 
+# 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
 def xls_extract(data, file, base_file_name, json_path):
     wb = openpyxl.Workbook()
     ws = wb.create_sheet(title="Measures")
@@ -32,13 +33,10 @@ def xls_extract(data, file, base_file_name, json_path):
         if 'measures' in t:
             list_measures = t['measures']
             for i in list_measures:
-                exp = ""
-                # print(type(i['expression']))
                 if (type(i['expression']) is list):
-                    # if type(i['expression']) == 'list':
-                    exp = " ".join(i['expression'][0:]).strip()
+                    exp = " ".join(i['expression'][0:])
                 else:
-                    exp = i['expression']
+                    exp = str(i['expression'])
                 prompt = "Explain the following calculation in a few sentences in simple business terms without using DAX function names: " + exp
                 completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=64)
                 i['description'] = completion.choices[0]['text'].strip()
@@ -54,7 +52,7 @@ def xls_extract(data, file, base_file_name, json_path):
         table.tableStyleInfo = style
         for col in ws.columns:
             for cell in col:
-                cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
+                cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True, wrapText=True)
 
         ws.column_dimensions["A"].width = 20
         ws.column_dimensions["B"].width = 30
@@ -69,7 +67,8 @@ def xls_extract(data, file, base_file_name, json_path):
     i = 0
     if 'tables' in data['model']:
         source.append(
-            ['Table No', 'Table Name', 'Table Mode', 'Table Type', 'Table Source', 'Original Table Name', 'Table Query','Modification', 'Modification Description'])
+            ['Table No', 'Table Name', 'Table Mode', 'Table Type', 'Table Source', 'Original Table Name', 'Table Query',
+             'Modification', 'Modification Description'])
         for t in data['model']['tables']:
             if 'partitions' in t:
                 list_partitions = t['partitions']
@@ -183,18 +182,23 @@ def xls_extract(data, file, base_file_name, json_path):
                             [i, name, mode, Ttype, TSource, otname, TQuery, "No Modification", "No Description"])
                 elif list_partitions[0]['source']['type'] == 'calculated':
                     name = list_partitions[0]['name'].split('-')[0]
-                    mode = str(list_partitions[0]['mode'])
-                    Ttype = "Calculated"
-                    i += 1
-                    TSource = "Calculated Table"
-                    otname = name
-                    TQuery = " ".join(List_source[0:])
-                    Tmodification = "No Modification"
-                    Tdescription = "Query Description: \n"
-                    prompt = "Explain the following calculation in a few sentences in simple business terms without using DAX function names: " + TQuery
-                    completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=128)
-                    Tdescription += completion.choices[0]['text'].strip().replace("\n", "")
-                    source.append([i, name, mode, Ttype, TSource, otname, TQuery, Tmodification, Tdescription])
+                    if "DateTableTemplate" not in name and "LocalDateTable" not in name:
+                        mode = str(list_partitions[0]['mode'])
+                        Ttype = "Calculated"
+                        i += 1
+                        TSource = "Calculated Table"
+                        otname = name
+                        if (type(List_source) is list):
+                            TQuery = " ".join(List_source[0:])
+                        else:
+                            TQuery = str(List_source)
+                        Tmodification = "No Modification"
+                        Tdescription = "DAX Query Description: \n"
+                        prompt = "Explain the following calculation in a few sentences in simple business terms without using DAX function names: " + TQuery
+                        completion = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=128)
+                        Tdescription += completion.choices[0]['text'].strip().replace("\n", "")
+                        t['description'] = Tdescription
+                        source.append([i, name, mode, Ttype, TSource, otname, TQuery, Tmodification, Tdescription])
 
         with codecs.open(json_path, 'w', 'utf-16-le') as f:
             json.dump(data, f, indent=4)
@@ -203,7 +207,8 @@ def xls_extract(data, file, base_file_name, json_path):
         table = Table(displayName="Source", ref="A1:I" + str(i))
         source.add_table(table)
 
-        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,showRowStripes=True, showColumnStripes=False)
+        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
+                               showRowStripes=True, showColumnStripes=False)
         table.tableStyleInfo = style
 
         for col in source.columns:
@@ -265,7 +270,8 @@ def xls_extract(data, file, base_file_name, json_path):
         if (cnt1 >= 1):
             table = Table(displayName="Relationships", ref="A1:G" + str(cnt1 + 1))
             relation.add_table(table)
-            style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,showRowStripes=True, showColumnStripes=False)
+            style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False,
+                                   showRowStripes=True, showColumnStripes=False)
             table.tableStyleInfo = style
 
             for col in relation.columns:
@@ -356,9 +362,8 @@ def json_extract(file):
 
     shutil.rmtree(temp_dir)
 
-
 def api():
-    key = input("Enter your OpenAI API Secret Key: ")
+    key = input("Enter your OpenAI API Secret key: ")
     if (len(key) == len(openai.api_key)):
         openai.api_key = key
 
@@ -371,7 +376,7 @@ def main():
     if (op == 1):
         file = filedialog.askopenfilename(title="Select file")
         if (file != ""):
-            print("Currently Processing {" + str(Path(file).stem) + "}...")
+            print("Currently Processing {" + str(Path(file).stem) + ".pbit}...")
             json_extract(file)
         else:
             print("No File Selected")
@@ -379,7 +384,7 @@ def main():
         files = filedialog.askopenfilenames(title="Select files")
         if (files != ""):
             for f in files:
-                print("Currently Processing {" + str(Path(f).stem) + "}...")
+                print("Currently Processing {" + str(Path(f).stem) + ".pbit}...")
                 json_extract(f)
         else:
             print("No Files Selected.")

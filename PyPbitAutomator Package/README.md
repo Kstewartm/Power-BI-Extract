@@ -77,7 +77,6 @@
 ### Getting Started:
 - To get started with the solution, follow these steps:
     - Clone the repository to your local machine.
-    - Install the required dependencies listed in the requirements.txt file.
     - Run the solution using the Extractor.py file.
 
 ****
@@ -111,5 +110,5 @@
 
 ### Package Installation
 ```bash
-pip install -i https://test.pypi.org/simple/ PyPbitAutomator==0.0.3
+pip install -i https://test.pypi.org/simple/ PyPbitAutomator==0.1.2
 ```
