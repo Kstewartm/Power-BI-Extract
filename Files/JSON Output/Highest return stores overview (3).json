@@ -801,7 +801,7 @@
                                           "expression": [
                                                 "let",
                                                 "    Source = Sql.Database(\"apacanzsynapsewsdev.sql.azuresynapse.net\", \"ReportingDB\", [Query=\"SELECT#(lf)Bakery#(lf),Brand_Transaction AS \"\"Brand (Transaction)\"\"#(lf),BuyingGroup AS \"\"Buying Group\"\"#(lf),CalendarMonth AS \"\"Calendar Month\"\"#(lf),CalendarYear AS \"\"Calendar Year\"\"#(lf),CalendarYearMonth AS \"\"Calendar Month\"\"#(lf),Company AS Company#(lf),Date AS Date#(lf),DCSupport AS Region#(lf),[Key]#(lf),Material#(lf),PnPArticleNumber#(lf)AS \"\"PnP Article Number\"\"#(lf),PnPGoodsMovement#(lf) AS \"\"PnP Goods Movement\"\"#(lf),[PnPQtyReceivedCU]#(lf)AS \"\"PnP Qty Received CU\"\"#(lf),PnPGRVRecords#(lf)AS \"\"PnP Qty Received Records\"\"#(lf),PnPMovementItem#(lf)AS \"\"PnP Movement Item\"\"#(lf),PnPMovementNumber#(lf)AS \"\"PnP Movement Number\"\"#(lf),PnPMovementSubNumber#(lf)AS \"\"PnP Movement Sub Number\"\"#(lf),PnPMovementTransaction#(lf)AS \"\"PnP Movement Transaction\"\"#(lf),PnPPurchaseDocument#(lf)AS \"\"PnP Purchase Document\"\"#(lf),PnPRegion#(lf)AS \"\"PnP Region\"\"#(lf),[PnPQtyReturnedCU]#(lf)AS \"\"PnP Returns Qty CU\"\"#(lf)--,PnPReturnsRecords#(lf)--AS \"\"PnP Returns Records\"\"#(lf),PnPStoreID#(lf)AS \"\"PnP Store ID\"\"#(lf),ProdBrand#(lf)AS \"\"Prod Brand\"\"#(lf),ProdCategory#(lf)AS \"\"Prod Category\"\"#(lf),ProdDivision#(lf)AS \"\"Prod Division\"\"#(lf),ProdExecutracStatus#(lf)AS \"\"Prod Executrac Status\"\"#(lf),ProdStatus#(lf)AS \"\"Prod Status\"\"#(lf),ProdStratetyStatus#(lf)AS \"\"Prod Stratety Status\"\"#(lf),ProdSubCategory#(lf)AS \"\"Prod Sub Category\"\"#(lf),Store#(lf),StoreExecutracStatus#(lf)AS \"\"Store Executrac Status\"\"#(lf),StoreStatus#(lf)AS \"\"Store Status\"\"#(lf),StoreType#(lf),StoreType_Transaction#(lf)AS \"\"Store Type (Transaction)\"\"#(lf),PFIRegion#(lf)FROM [dbo].[PnPDeliveries]\"]),",
-                                                "    //This renames the column \"StoreType\" to \"Store Type\" in the source table.",
+                                                "    //This renames the \"StoreType\" column to \"Store Type\" in the source table.",
                                                 "    #\"Renamed Columns\" = Table.RenameColumns(Source,{{\"StoreType\", \"Store Type\"}})",
                                                 "in",
                                                 "    #\"Renamed Columns\""
@@ -812,23 +812,23 @@
                         "measures": [
                               {
                                     "name": "Quantity Returned",
-                                    "expression": "\nSUM( PNP_DELIVERIES_SSC_001[PnP Returns Qty CU] )",
+                                    "expression": "\nSUM(\n    PNP_DELIVERIES_SSC_001[PnP Returns Qty CU]\n)",
                                     "formatString": "#,0",
                                     "lineageTag": "2d0f569f-c99b-4c23-9854-31b83e12b742",
                                     "dataType": "double",
-                                    "description": "This calculation is summing up the quantity of returns for the PnP Returns Qty CU column in the PNP_DELIVERIES_SSC_001 table. This will allow us to see the total quantity of returns for a given period or product."
+                                    "description": "This calculation would add the number of return products in a given unit, such as boxes or pallets, for the selected PnP Returns Qty field and provide a total for the selected period."
                               },
                               {
                                     "name": "Quantity Recieved",
-                                    "expression": "\nSUM ( \n    PNP_DELIVERIES_SSC_001[PnP Qty Received CU] \n)",
+                                    "expression": "\nSUM( PNP_DELIVERIES_SSC_001[PnP Qty Received CU] )",
                                     "formatString": "#,0",
                                     "lineageTag": "ef2eaeed-a5d8-46fd-9bd6-58ad43b300e0",
                                     "dataType": "double",
-                                    "description": "This calculation adds together the total quantity of items received from the PnP Delivery SSC 001 table. This can be useful for tracking the total number of items received from one supplier, allowing for easy comparison of incoming inventory."
+                                    "description": "This calculation sums up the total quantity of product received by a company in the \"PnP Qty Received CU\" column of the table \"PNP_DELIVERIES_SSC_001\". This calculation is useful for understanding how much of a product a business has received from outside suppliers or distribution"
                               },
                               {
                                     "name": "Return of Received %",
-                                    "expression": "\nCALCULATE( \n    (DIVIDE(PNP_DELIVERIES_SSC_001[Quantity Returned], PNP_DELIVERIES_SSC_001[Quantity Recieved], BLANK())) * 100 \n)",
+                                    "expression": "\nCALCULATE(\n    DIVIDE(\n        PNP_DELIVERIES_SSC_001[Quantity Returned], \n        PNP_DELIVERIES_SSC_001[Quantity Recieved], \n        BLANK()\n    ) \n)*100",
                                     "formatString": "0.00",
                                     "lineageTag": "a20b2349-b2c0-4d81-9c4c-d64e251212b0",
                                     "dataType": "double",
@@ -837,11 +837,11 @@
                                                 "property": "FormatString"
                                           }
                                     ],
-                                    "description": "This calculation is finding the percentage of items that were returned compared to those that were recieved. It is the result of dividing the number of items returned by the number of items recieved, then multiplying the result by 100."
+                                    "description": "This calculation divides the quantity of items returned by the quantity of items received, and then multiplies the result by 100. This calculation can help determine the return rate as a percentage of all items received."
                               },
                               {
                                     "name": "Last Updated",
-                                    "expression": "\nTODAY()",
+                                    "expression": "\n-LASTDATE(Ax[Date])\n\nTODAY() - LASTDATE(Ax[Date])",
                                     "formatString": "mmmm\\, yyyy",
                                     "lineageTag": "0cf1fda1-32b5-4028-b565-2cb8a216a414",
                                     "dataType": "dateTime",
@@ -851,23 +851,23 @@
                                                 "value": "{\"isDateTimeCustom\":true}"
                                           }
                                     ],
-                                    "description": "TODAY() is a DAX function that returns the current date. This is useful for filtering data that displays results for time frames, such as today, yesterday, or this week, or for calculating differences like in accounting where a due date may be based on the current date."
+                                    "description": "- 7\n\nThis calculation subtracts 7 days from the current date using the TODAY() function. This can be used to determine a date 7 days in the past from the current date. This is useful if you need to compare and analyze data within a one week period."
                               },
                               {
                                     "name": "Premium",
-                                    "expression": "\nCALCULATE( \n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Premium\"\n)",
+                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Premium\"\n)",
                                     "formatString": "#,0",
                                     "lineageTag": "4b0319e8-3dd4-4b48-aa13-a2562cf46e92",
                                     "dataType": "double",
-                                    "description": "This calculation calculates the total quantity returned from a product subcategory named \"Premium\". It uses the column \"Quantity Returned\" from the table \"PNP_DELIVERIES_SSC_001\"."
+                                    "description": "This calculation is finding the total quantity of \"Premium\" products that were returned. It is looking through the data set PNP_DELIVERIES_SSC_001 and searching for the sum of the quantity returned for every product that falls under the \"Premium\" product subcategory."
                               },
                               {
                                     "name": "Standard",
-                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Standard\"\n)",
+                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned], \n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Standard\"\n)",
                                     "formatString": "#,0",
                                     "lineageTag": "4054d6fd-fe34-45e0-80c1-34c025b5251b",
                                     "dataType": "double",
-                                    "description": "This calculation is finding the total quantity of returned items from the product sub category \"Standard\". It is using the PNP_DELIVERIES_SSC_001 table to find the returned items and then summing them up to get the total quantity returned."
+                                    "description": "This calculation is finding the sum of the \"Quantity Returned\" from the table \"PNP_DELIVERIES_SSC_001\" where the \"Prod Sub Category\" is equal to \"Standard\"."
                               },
                               {
                                     "name": "Dumpy",
@@ -875,31 +875,31 @@
                                     "formatString": "#,0",
                                     "lineageTag": "e711672f-b726-4686-823c-7b8bf933ebf5",
                                     "dataType": "double",
-                                    "description": "This calculation is returning the total quantity returned for all items in the Dumpy product sub category of the PNP_DELIVERIES_SSC_001 table. It is essentially summing up all quantity returned of items from the Dumpy product sub category."
+                                    "description": "This calculation is for the total quantity returned for all products in the \"Dumpy\" subcategory in the PNP_DELIVERIES_SSC_001 table. It is used to determine the total quantity of defective products or products returned for a specific product subcategory."
                               },
                               {
                                     "name": "Smart",
-                                    "expression": "\nCALCULATE( \n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Smart\"\n)",
+                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned], \n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Smart\"\n)",
                                     "formatString": "#,0",
                                     "lineageTag": "39c08063-f44c-4099-bc68-4e24041b3843",
                                     "dataType": "double",
-                                    "description": "This calculation is used to calculate the total quantity returned for products in the \"Smart\" product subcategory."
+                                    "description": "This calculation finds the total quantity of products returned in the \"Smart\" product subcategory of the PNP_DELIVERIES_SSC_001 data set. It multiplies each 'Quantity Returned' value in the data set by a filter on 'Prod Sub Category'. This produces the total"
                               },
                               {
                                     "name": "Buns & Rolls",
-                                    "expression": "\nCALCULATE(\n   PNP_DELIVERIES_SSC_001[Quantity Returned],\n   PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Buns & Rolls\"\n)",
+                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Buns & Rolls\"\n)",
                                     "formatString": "#,0",
                                     "lineageTag": "b9a6e941-2a6a-4f60-a3c4-03c7ca336d7c",
                                     "dataType": "double",
-                                    "description": "This calculation is finding the total quantity of \"Buns & Rolls\" that were returned. It is essentially finding the sum of the quantity returned within the PNP_DELIVERIES_SSC_001 table where the product subcategory is \"Buns & Rolls\"."
+                                    "description": "This calculation is finding the total quantity returned for products in the sub category \"Buns & Rolls\" in the PNP_DELIVERIES_SSC_001 table."
                               },
                               {
                                     "name": "Everyday+",
-                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Everyday +\"\n)",
+                                    "expression": "\nCALCULATE(\n    PNP_DELIVERIES_SSC_001[Quantity Returned],\n    PNP_DELIVERIES_SSC_001[Prod Sub Category] = \"Everyday+\"\n)",
                                     "formatString": "#,0",
                                     "lineageTag": "5d20fea1-6ff8-4219-a366-83b979b90a2d",
                                     "dataType": "double",
-                                    "description": "This calculation looks for the quantity returned for product sub category Everyday+. It is likely used to help analyze returns for a specific type of product to better understand which products have been returned more frequently."
+                                    "description": "This calculation determines the total quantity of items returned for the product subcategory \"Everyday+\". It looks through the entries in the table PNP_DELIVERIES_SSC_001 to count up how many items in the Everyday+ subcategory have been returned."
                               },
                               {
                                     "name": "Refresh Date",
@@ -918,7 +918,7 @@
                                                 "value": "{\"isDateTimeCustom\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is taking the maximum date value from the PNP_DELIVERIES_SSC_001 table. This is useful for determining the most recent date in the table. This could be useful for analyzing trends in deliveries over time or for determining the latest date for which delivery data is available."
+                                    "description": "This calculation returns the greatest date among the 'Date' column of the 'PNP_DELIVERIES_SSC_001' table. It will be the most recent date among all 'Date' values in the column. This could be used to identify the time of the latest delivery in the table"
                               }
                         ],
                         "hierarchies": [

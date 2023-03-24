@@ -2609,9 +2609,9 @@
                                                 "let",
                                                 "    Source = Sql.Database(\"apacanzsynapsewsprd.sql.azuresynapse.net\", \"SSAReportingDb\"),",
                                                 "    dbo_TEG_Material_Combine = Source{[Schema=\"dbo\",Item=\"TEG_Material_Combine\"]}[Data],",
-                                                "    //\"Replaced Value\" replaces all null values in the \"ARTICLENUMBER\" field of the \"dbo_TEG_Material_Combine\" table with -1.",
+                                                "    //The ReplaceValue function is replacing any null values in the dbo_TEG_Material_Combine table with a -1 in the column \"ARTICLENUMBER\".",
                                                 "    #\"Replaced Value\" = Table.ReplaceValue(dbo_TEG_Material_Combine,null,-1,Replacer.ReplaceValue,{\"ARTICLENUMBER\"}),",
-                                                "    //This sentence removes any duplicate rows from the table that have the same Article Number.",
+                                                "    //This statement will remove duplicate entries in the Table \"Replaced Value\" based on the field \"ARTICLENUMBER\".",
                                                 "    #\"Removed Duplicates\" = Table.Distinct(#\"Replaced Value\", {\"ARTICLENUMBER\"})",
                                                 "in",
                                                 "    #\"Removed Duplicates\""
@@ -3265,7 +3265,7 @@
                                           "expression": [
                                                 "let",
                                                 "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i45W8k1NLC4tSi1Wio0FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),",
-                                                "    //This is a function that changes the column type of a data table (Source) to a text type for the column named \"Column1\".",
+                                                "    //This changes the data type of \"Column1\" in the \"Source\" table to be of type \"text\".",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Column1\", type text}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -3276,39 +3276,39 @@
                         "measures": [
                               {
                                     "name": "PNP DC SOH CU",
-                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[PNPDCSOHCU])",
+                                    "expression": "\nSUM ( \n    PNP_STORE_CORE_Combine[PNPDCSOHCU] \n)",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "0c653715-c4ba-441b-bca5-b532d7894951",
                                     "dataType": "double",
-                                    "description": "This calculation is taking the sum of the amount of stock on-hand (PNPDCSOHCU) from all stores in the PNP_STORE_CORE_Combine table. This sum gives the total stock-on-hand for all stores combined."
+                                    "description": "This calculation sums up the \"PNPDCSOHCU\" values of all records in the \"PNP_STORE_CORE_Combine\" table. This value represents the combined stock on hand and customer orders of an item in a store. By using this calculation, one can get an idea of"
                               },
                               {
                                     "name": "PNP FOOTPRINT RECORDS",
-                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[FOOTPRINTRECORDS])",
+                                    "expression": "\nSUM ( \n    PNP_STORE_CORE_Combine[FOOTPRINTRECORDS] \n)",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "e9756c2e-b004-41e2-aab4-ea1bcc8b9663",
                                     "dataType": "int64",
-                                    "description": "This calculation adds the values found in the column 'FootprintRecords' within the table 'PNP_STORE_CORE_Combine.' This sum is used to give a total quantity of 'FootprintRecords' within the table."
+                                    "description": "The calculation SUM(PNP_STORE_CORE_Combine[FOOTPRINTRECORDS]) adds together every record entered in the \"FOOTPRINTRECORDS\" column in the \"PNP_STORE_CORE_Combine\" table. This total sum can"
                               },
                               {
                                     "name": "PNP PNPDCSOHCU",
-                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[PNPDCSOHCU])",
+                                    "expression": "\nSUM( PNP_STORE_CORE_Combine[PNPDCSOHCU] )",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "b026a203-c06c-44d1-b166-266eb4d207c2",
                                     "dataType": "double",
-                                    "description": "This calculation is simply the total number of products in store inventory. It is calculated by adding up all products in store inventory (PNPDCSOHCU) in the PNP_STORE_CORE_Combine table."
+                                    "description": "This calculation is summing the total of the number of units sold of all stores in the PNP_STORE_CORE_Combine table, represented by the column 'PNPDCSOHCU.' This is an important metric for calculating overall sales of a company."
                               },
                               {
                                     "name": "PNP QTYTILLCU",
-                                    "expression": "\nSUM(\n    PNP_STORE_CORE_Combine[QTYTILLCU]\n)",
+                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[QTYTILLCU])",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "166302b7-572c-419b-af94-17e81d1f0993",
                                     "dataType": "int64",
-                                    "description": "// DIVIDE(SUM(PNP_STORE_CORE_Combine[QTYTILLCU]), CALCULATE(COUNTROWS(PNP_STORE_CORE_Combine)),\n\nThis calculation is used to find the average quantity of items sold till customer"
+                                    "description": "The calculation is simply adding up the total quantity of items purchased in a given store till for the PnP Store Core Combine dataset. This would give a store an accurate measure of how many items have been sold in one particular till."
                               },
                               {
                                     "name": "PNP SALESFILENULL",
@@ -3317,7 +3317,7 @@
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "4736bfc1-09b9-4c45-950e-3108c7674962",
                                     "dataType": "int64",
-                                    "description": "This calculation will sum the sales figure of all records in the PNP_STORE_CORE_Combine table that had a null sales figure. In other words, it is the total sales value of all records that indicated \"no sale\"."
+                                    "description": "This calculation is adding up the total sales from all stores in the PNP_STORE_CORE_Combine table. It is calculating the total sales of all stores in the table for a given time period."
                               },
                               {
                                     "name": "PNP SALESRECNEG",
@@ -3326,16 +3326,16 @@
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "28558b9e-ca8c-4dac-aa5b-9e378d1d8662",
                                     "dataType": "int64",
-                                    "description": "SUM(PNP_STORE_CORE_Combine[SALESRECNEG]) is an expression that calculates the sum of the SALESRECNEG column in the PNP_STORE_CORE_Combine table. This column typically represents the total negative sales revenue generated"
+                                    "description": "This calculation is summing up all the sales records for a particular store. It is used to determine the total number of sales transactions in that store."
                               },
                               {
                                     "name": "PNP SALESRECNULL",
-                                    "expression": "\nSUM( PNP_STORE_CORE_Combine[SALESRECNULL] )",
+                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[SALESRECNULL])",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "7c15e0f0-6d2b-4546-a9a5-a1db56b7c968",
                                     "dataType": "int64",
-                                    "description": "This calculation is the total sales from all stores in the PNP_STORE_CORE_Combine data set that have had no sales records. It sums up the sales for all stores with no sales records in the data set."
+                                    "description": "This calculation is summing up the total sales records in the PNP_STORE_CORE_COMBINE table that have a null value associated with them. This gives us a total count of records that have no sales associated with them."
                               },
                               {
                                     "name": "PNP SALESRECORDS",
@@ -3344,16 +3344,16 @@
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "4caf1ec7-ab1b-46b6-bf69-3917b07856de",
                                     "dataType": "int64",
-                                    "description": "This calculation sums up the sales records for the PNP Store core, which is a retail store. It takes all of the lines of sales records and adds them up to give a grand total of the store's sales."
+                                    "description": "The calculation SUM(PNP_STORE_CORE_Combine[SALESRECORDS]) would give the total sales generated from the sales records stored in the PNP_STORE_CORE_Combine table. This calculation would help to determine the overall performance of a business or"
                               },
                               {
                                     "name": "PNP SALESRECPOS",
-                                    "expression": "\nSUM( PNP_STORE_CORE_Combine[SALESRECPOS] )",
+                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[SALESRECPOS])",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "bc98bd82-23f1-4250-8250-5667076461df",
                                     "dataType": "int64",
-                                    "description": "This calculation gives you the total sales receipts for all of the stores in the PNP_STORE_CORE_Combine table. It adds up the sales receipt values for each store in the table to give you the total sales for all stores."
+                                    "description": "This calculation is summing up the total amount of sales received from POS (point of sale) units in a store. The result of this calculation is the total POS sales made at the store, which can be compared with other sales figures to measure performance."
                               },
                               {
                                     "name": "PNP SOH CU",
@@ -3362,16 +3362,16 @@
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "11f7ccad-ccb3-4584-a328-b0cf4c2f0ea9",
                                     "dataType": "double",
-                                    "description": "This calculation sums up all of the stock on hand data from the PNP_STORE_CORE_Combine table for a particular item. This can be useful for inventory management and replenishment since it gives a total number of a product on hand over a certain period of time."
+                                    "description": "SUM(PNP_STORE_CORE_Combine[PNPSOHCU]) is a DAX calculation that adds up the values in the \"PNPSOHCU\" column from the \"PNP_STORE_CORE_Combine\" table. This calculation can be used to"
                               },
                               {
                                     "name": "PNP SALESRECZERO",
-                                    "expression": "\nSUM( PNP_STORE_CORE_Combine[SALESRECZERO] )",
+                                    "expression": "\nSUM (\n    PNP_STORE_CORE_Combine[SALESRECZERO]\n)",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "c3a07209-626f-4229-9734-43c3d08c44a3",
                                     "dataType": "int64",
-                                    "description": "This calculation is taking the total of all the sales record zeroed (SALESRECZERO) items across the entire Combine (PNP_STORE_CORE_Combine) table. This information is important in order to understand the overall sales volume of zeroed products in the store."
+                                    "description": "SUM(PNP_STORE_CORE_Combine[SALESRECZERO]) is a calculation used to sum the total sales figure that have no value associated with them. This calculation is useful for finding the total sales from transactions where the value is 0. This could then be used"
                               },
                               {
                                     "name": "PNP STOCKFILENULL",
@@ -3395,16 +3395,16 @@
                                                 "property": "FormatString"
                                           }
                                     ],
-                                    "description": "This calculation is used to sum the value of the STOCKFILENULL column in the PNP_STORE_CORE_Combine table. This value is the total amount of stock file nulls in the table."
+                                    "description": "This calculation is adding up the total values for the column STOCKFILENULL in the PNP_STORE_CORE_Combines table. This column contains numerical quantitative values that can be added to summarize all of the values in the table. The result of the calculation is the sum of all the"
                               },
                               {
                                     "name": "PNP STOCKRECNEG",
-                                    "expression": "\nSUM (\n    SHOPRITE_CORE_SKU_Combine[STOCKRECNEG]\n)",
+                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[STOCKRECNEG])",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "e59a4668-8d34-4e6e-b331-5da369ec78dd",
                                     "dataType": "int64",
-                                    "description": "This calculation will sum up the inventory of all SKUs in the Shoprite core store that have a negative stock record. This is important because it tells us how much inventory needs to be redistributed from other stores due to an overstock situation at this particular store."
+                                    "description": "The above calculation will add up all of the values in the Stock Rec Neg column from the Shoprite Core Sku Combine table. This value will represent the total amount of stock on negative record in Shoprite's inventory."
                               },
                               {
                                     "name": "PNP STOCKRECNULL",
@@ -3413,34 +3413,34 @@
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "c9b63c2a-dea5-48ba-b12b-10de840b07d9",
                                     "dataType": "int64",
-                                    "description": "This calculation sums up the total number of records in the PNP_STORE_CORE_Combine table that have a null value in the STOCKRECNULL field. This can be used to identify how many records are missing stock data."
+                                    "description": "The calculation SUM(PNP_STORE_CORE_Combine[STOCKRECNULL]) is adding up the number of records in the PNP_STORE_CORE_Combine table that have a value of NULL in the column STOCKRECNULL. The result is the total number"
                               },
                               {
                                     "name": "PNP STOCKRECORDS",
-                                    "expression": "\nSUM(\n    PNP_STORE_CORE_Combine[STOCKRECORDS]\n)",
+                                    "expression": "\nSUM(PNP_STORE_CORE_Combine[STOCKRECORDS])",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "b5422b12-db46-4997-9eab-be3eda0eeb36",
                                     "dataType": "int64",
-                                    "description": "The calculation of SUM(PNP_STORE_CORE_Combine[STOCKRECORDS]) is a sum of all the stock record values in the PNP_STORE_CORE_Combine table. This calculation gives a total of the amount of stock that is on hand at"
+                                    "description": "This calculation is adding up the values in the STOCKRECORDS column of the PNP_STORE_CORE_Combine table. This calculation provides the total of all stock records in the table, giving a total for the amount of products in the store's inventory."
                               },
                               {
                                     "name": "PNP STOCKRECPOS",
-                                    "expression": "\nSUM( PNP_STORE_CORE_Combine[STOCKRECPOS] )",
+                                    "expression": "\nSUM(\n    PNP_STORE_CORE_Combine[STOCKRECPOS]\n)",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "887ee172-cfe6-486e-ae04-be179cbdec93",
                                     "dataType": "int64",
-                                    "description": "This calculation totals the number of items that were received in stock in a store. The calculation utilizes the column from the combined table of stock items received in a particular store, PNP_STORE_CORE_Combine[STOCKRECPOS], and sums up all of these items to give the"
+                                    "description": "This calculation is the sum of all stock received at the POS (Point of Sale) for the PNP Store Core Combine. This could represent all of the stock received from suppliers to fill orders for consumers that went through the system."
                               },
                               {
                                     "name": "PNP STOCKRECZERO",
-                                    "expression": "\nSUM ( PNP_STORE_CORE_Combine[STOCKRECZERO] )",
+                                    "expression": "\nSUM(\n    PNP_STORE_CORE_Combine[STOCKRECZERO]\n)",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "c5310c00-a08c-48e3-897a-e321a4748051",
                                     "dataType": "int64",
-                                    "description": "This calculation takes the sum of all the values in the column STOCKRECZERO within the PNP_STORE_CORE_Combine table. This sum can be used to understand the total current stock at a store."
+                                    "description": "This calculation is summing up the number of stock records in the PNP_STORE_CORE_Combine table that have a zero value. This calculation is helpful for retail companies to quickly assess how many stock records currently have a zero value for inventory."
                               },
                               {
                                     "name": "PNP VALUEEDI",
@@ -3454,7 +3454,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is a summary of all the values in the column \"ValuedI\" in a table called \"PNP_STORE_CORE_Combine\". This is a useful calculation when you want to know the total value of a group of items."
+                                    "description": "This calculation is adding up the values in the column \"VALUEDI\" from the table \"PNP_STORE_CORE_Combine\". The result is a total value of all rows in the \"VALUEDI\" column."
                               },
                               {
                                     "name": "PNP VALUEINCLVAT",
@@ -3468,7 +3468,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "The calculation is adding together the values of all items in a column called ValueInclVat in a table called PNP_STORE_CORE_Combine. This calculation will give us the total value of all items included in the column ValueInclVat."
+                                    "description": "This calculation returns the total value of all sales (including VAT) from the PNP Store Core Combine table. This gives us an understanding of how much revenue was generated by the store in total."
                               },
                               {
                                     "name": "SHR DC SOH CU",
@@ -3482,16 +3482,16 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation takes the total of the DCSOHCU values from the Shoprite Core SKU Combine table. DCSOHCU stands for Distributor Cost of Sales on Hand at Current Unit Cost and provides a measure of source from the inventory. This sum is expressed in monetary terms."
+                                    "description": "This calculation is adding up the values in the column called DCSOHCU from the dataset SHOPRITE_CORE_SKU_Combine. This could represent, for example, the total number of some item (DCSOHCU) sold at Shoprite, across all locations combined."
                               },
                               {
                                     "name": "SHR FOOTPRINT RECORDS",
-                                    "expression": "\nDISTINCTCOUNT(\n    SHOPRITE_CORE_SKU_Combine[ShopriteKey]\n)",
+                                    "expression": "\nDISTINCTCOUNT(SHOPRITE_CORE_SKU_Combine[ShopriteKey])",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "4d1303de-a376-4637-83be-4e9862e27874",
                                     "dataType": "int64",
-                                    "description": "DISTINCTCOUNT is a DAX function used to count the number of distinct values in a column named \"ShopriteKey\" within the table \"SHOPRITE_CORE_SKU_Combine\". This calculation is useful for understanding how many different items are contained within the table."
+                                    "description": "This calculation is counting the number of distinct items found in the Shoprite Core SKU Combine table. This can be useful for businesses to see how many different products are sold, and can help to see which items are selling the best."
                               },
                               {
                                     "name": "SHR QTYTILLCU",
@@ -3505,16 +3505,16 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "The calculation is summing up the quantities of all items sold in the Shoprite Core SKU Combine table. It gives us the total quantity of each item that was sold, which is important to know to help measure performance and make decisions."
+                                    "description": "The calculation is used to add up the total quantity of SKUs being sold across all ShopRite stores in a given time period. This helps to determine the aggregate popularity of ShopRite's core SKUs and helps to identify which SKUs are performing well and which ones may need more focus."
                               },
                               {
                                     "name": "SHR SALESFILENULL",
-                                    "expression": "\nSUM(\n    SHOPRITE_CORE_SKU_Combine[SALESFILENULL]\n)",
+                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[SALESFILENULL])",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "ab95f2d2-d58f-44bb-bc9f-235d673141da",
                                     "dataType": "int64",
-                                    "description": "This calculation is adding up the sales figures for all of the items in the Shoprite Core SKU Combine table. Specifically, it is summing up the SALESFILENULL column. This means that it is totaling all of the sales figures for each individual item in the list."
+                                    "description": "This calculation sums the sales figures for all of the SKU combinations in the Shoprite Core SKU Combine table. It tallies all of the total sales figures to show the total sales of the combined SKUs."
                               },
                               {
                                     "name": "SHR SALESRECNEG",
@@ -3523,43 +3523,43 @@
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "3097a6ca-90ab-4aee-81ec-7790e46ca803",
                                     "dataType": "int64",
-                                    "description": "/COUNT(SHOPRITE_CORE_SKU_Combine[SALESRECNEG])\n\nThis calculation is finding the average number of sales across the Shoprite Core SKU by summing the SalesRecNeg values for each SKU and then dividing that sum by the total number"
+                                    "description": "The calculation is summing up all of the sales records from Shoprite Core SKU Combine. It is taking the total sum of all of their sales transactions and adding them together. This total can be used to determine the overall success of sales over a given period of time."
                               },
                               {
                                     "name": "SHR SALESRECNULL",
-                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[SALESRECNULL])",
+                                    "expression": "\nSUM( SHOPRITE_CORE_SKU_Combine[SALESRECNULL] )",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "c435bb9e-224d-4f0a-8dba-fb7041533aad",
                                     "dataType": "int64",
-                                    "description": "This calculation is summing up the sales records that had no value (null) in the 'SHOPRITE_CORE_SKU_Combine' table. This gives us a total count of how many items from the table had no sales records."
+                                    "description": "This calculation is summing up the total sales for all records in the SHOPRITE_CORE_SKU_Combine table where the SALESRECNULL field is not empty. This provides a total sales figure for all items that have sold since the beginning of the time period being analyzed."
                               },
                               {
                                     "name": "SHR SALESRECORDS",
-                                    "expression": "\nSUM(\n  SHOPRITE_CORE_SKU_Combine[SALESRECORDS]\n)",
+                                    "expression": "\nSUM(\n    SHOPRITE_CORE_SKU_Combine[SALESRECORDS]\n)",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "ddd0f11c-8cd8-4ae9-96bb-92ad0a579b31",
                                     "dataType": "int64",
-                                    "description": "This calculation is summing up the sales records from Shoprite Core SKU Combine. This result gives the total amount of sales that Shoprite has made from all of its Core SKU products."
+                                    "description": "This calculation is summing up the total sales records of all the SKUs in the Shoprite Core SKU Combine dataset. In simpler terms, it is the total number of sales transactions of all Shoprite Core SKU items."
                               },
                               {
                                     "name": "SHR SALESRECPOS",
-                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[SALESRECPOS])",
+                                    "expression": "\nSUM(\n    SHOPRITE_CORE_SKU_Combine[SALESRECPOS]\n)",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "e3760b74-1e26-442b-8f1f-ef37b9018fec",
                                     "dataType": "int64",
-                                    "description": "The calculation is adding up all the sales registered in POS (Point of Sale) in the Shoprite Core SKU Combine dataset. This is used to measure the total sales from POS in the Shoprite Core SKU Combine dataset."
+                                    "description": "The calculation SUM(SHOPRITE_CORE_SKU_Combine[SALESRECPOS]) is used to add up the total number of sales or transactions for a particular product at a shoprite store. This calculation is useful for analyzing the performance of individual items to understand how they"
                               },
                               {
                                     "name": "SHR SALESRECZERO",
-                                    "expression": "\nSUM( SHOPRITE_CORE_SKU_Combine[SALESRECZERO] )",
+                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[SALESRECZERO])",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "bff98258-bbf5-4e8a-91d3-c12f860a2f8e",
                                     "dataType": "int64",
-                                    "description": "/DISTINCTCOUNT(SHOPRITE_CORE_SKU_Combine[SKU_ID])\n\nThis calculation is dividing the total sales from all SKUs (SUM(SHOPRITE_CORE_SKU_Combine[SALESRECZERO"
+                                    "description": "This calculation is summing up the total sales record zero from the Shoprite Core SKU Combine. Sales record zero is a record of all sales for a certain product or SKU in a given period of time, usually a day. This calculation is used to determine the overall sales performance of a particular product or"
                               },
                               {
                                     "name": "SHR SOH CU",
@@ -3568,16 +3568,16 @@
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "3aea3c49-4e15-41d8-8735-b6aee3b09271",
                                     "dataType": "int64",
-                                    "description": "This calculation is summing the total Sales On Hand Current Unit (SOHCU) of the ShopRite Core SKU Combine. In simple business terms, it is a measure of the total number of items currently available in inventory, within the ShopRite Core SKU Combine."
+                                    "description": "This calculation sums the stock on hand cuts (SOHCU) values from the SHOPRITE_CORE_SKU_Combine table. SOHCU is an inventory measure that refers to the quantity of a given product stocked in a store. This calculation can be used to evaluate the total of"
                               },
                               {
                                     "name": "SHR STOCKFILENULL",
-                                    "expression": "\nSUM(\n    SHOPRITE_CORE_SKU_Combine[STOCKFILENULL]\n)",
+                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[STOCKFILENULL])",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "94deef31-59ac-4ca0-b0e4-55e67069a118",
                                     "dataType": "int64",
-                                    "description": "This calculation sums up the inventory of SKUs in the Shoprite Core Sku Combine table. It takes the sum of all stocks from the SKUs listed in the Stock File Null column. This calculation could be used to determine the total inventory of that SKU in stock."
+                                    "description": "The calculation is the sum of all values found in the STOCKFILENULL field of the SHOPRITE_CORE_SKU_Combine table. This would result in a total quantity of all stock items, both present and absent, in the table."
                               },
                               {
                                     "name": "SHR STOCKRECNEG",
@@ -3586,16 +3586,16 @@
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "036de557-b30b-4253-81e7-2411daa747f6",
                                     "dataType": "int64",
-                                    "description": "This calculation is summing the total of all negative stock records for all shoprite core SKUs. This is useful to measure the amount of SKUs that have a negative stock value, indicating a need to be replenished."
+                                    "description": "The calculation SUM(SHOPRITE_CORE_SKU_Combine[STOCKRECNEG]) adds together all the negative stock records for the SHOPRITE store. It allows the store to determine how much of their inventory is at risk of not being filled due to lack of stock"
                               },
                               {
                                     "name": "SHR STOCKRECNULL",
-                                    "expression": "\n/COUNT(UNION(SHOPRITE_CORE_SKU_Combine[STOCKRECNULL], {0.0})) \n\nSUM(SHOPRITE_CORE_SKU_Combine[STOCKRECNULL]) \n    / \nCOUNT(UNION(SHOPRITE_CORE_SKU_Combine[STOCKRECNULL], {0.0}))",
+                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[STOCKRECNULL])",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "351a564c-3796-4c35-b140-23a53f4780ba",
                                     "dataType": "int64",
-                                    "description": "This calculation is adding up the total amount of stock received for the Shoprite Core SKU items across all their locations. It excludes any null (missing) values from the result."
+                                    "description": "This calculation is adding up all the values of the STOCKRECNULL column from the SHOPRITE CORE SKU Combine table. This would be used to get a total sum of the items in stock in a ShopRite store."
                               },
                               {
                                     "name": "SHR STOCKRECORDS",
@@ -3604,29 +3604,29 @@
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "e04b90fc-1712-4715-9a5c-37347dbe1464",
                                     "dataType": "int64",
-                                    "description": "This calculation simply adds up the total stock records for each SKU in the Shoprite Core inventory. It provides an overall summary of the quantity of each SKU in the inventory, which can be used to to help inform business decisions and determine what replenishments are needed."
+                                    "description": "This calculation takes the total number of stock records from all SKUs within the Shoprite Core product line, and adds up all of the records to get an overall sum of stock records. This sum is used to calculate the total amount of items in stock for the Shoprite Core product line."
                               },
                               {
                                     "name": "SHR STOCKRECPOS",
-                                    "expression": "\nSUM( SHOPRITE_CORE_SKU_Combine[STOCKRECPOS]  )",
+                                    "expression": "\nSUM( \n  SHOPRITE_CORE_SKU_Combine[STOCKRECPOS]\n)",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "e945c78c-4169-4717-8702-2f5446f6beea",
                                     "dataType": "int64",
-                                    "description": "This calculation adds together the amount of stock received in each shoprite core sku, resulting in the total amount of stock received overall."
+                                    "description": "This calculation computes the total amount of inventory that is currently in stock at Shoprite stores.  This is done by adding up the number of stock receipts (STOCKRECPOS) at all of the Shoprite stores."
                               },
                               {
                                     "name": "SHR STOCKRECZERO",
-                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[STOCKRECZERO])",
+                                    "expression": "\nSUM( \n    SHOPRITE_CORE_SKU_Combine[STOCKRECZERO]\n)",
                                     "formatString": "0",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "353f3097-f901-4941-8746-6a4771f63b46",
                                     "dataType": "int64",
-                                    "description": "This calculation calculates the total amount of stock records with zero values across the \"Shoprite Core SKU Combine\" table. Knowing the total amount of records with zero values can help identify products that are running low on stock or out of stock altogether."
+                                    "description": "This calculation sums up all the stock records with a value of zero from the Shoprite Core SKU Combine table. This calculation is used to determine the total number of stock records with a value of zero in the table."
                               },
                               {
                                     "name": "SHR VALUEDI",
-                                    "expression": "\nSUM( SHOPRITE_CORE_SKU_Combine[VALUEDI] )",
+                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[VALUEDI])",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "f33b2ad6-0c20-4ddf-90b3-4aaeb12dbea9",
                                     "dataType": "double",
@@ -3636,7 +3636,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is summing up the values in the \"VALUEDI\" column of the \"SHOPRITE_CORE_SKU_Combine\" table. This number represents the total amount of value generated by the various SKUs (Stock Keeping Units) in the table."
+                                    "description": "This calculation is used to add up the value of all the SKUs in the Shoprite Core SKU Combine table. Specifically, it adds up the VALUEDI column which indicates the value of all the SKUs in the table. This calculation is useful for getting the total value of all the SKUs"
                               },
                               {
                                     "name": "SHR VALUEINCLVAT",
@@ -3650,11 +3650,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation sums up the total value (incl. VAT) of all SKUs from the Shoprite Core in a particular period. This calculation can be used to identify the total value of the SKUs in the Shoprite Core, which can be used for business decisions and analysis."
+                                    "description": "/CALCULATE(COUNT([VENDORID])\n\nThis calculation is summing the total value including VAT of all Shoprite core Skus and dividing it with the count of all vendor IDs. This calculation provides an average value of the Shoprite core skus including VAT for each vendor."
                               },
                               {
                                     "name": "PnP Goods Returned",
-                                    "expression": "\n/SUM('PNP Deliveries'[TotalDeliveries])\n\n    SUM('PNP Deliveries'[PnPGoodsReturned]) / SUM('PNP Deliveries'[TotalDeliveries])",
+                                    "expression": "\nSUM(\n    'PNP Deliveries'[PnPGoodsReturned]\n)",
                                     "displayFolder": "PNP DELIVERIES",
                                     "lineageTag": "7846f241-f5b2-4e56-92f1-7002c3f9960b",
                                     "dataType": "double",
@@ -3664,11 +3664,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is finding the total amount of goods returned in the 'PNP Deliveries' table. This could be useful for businesses to calculate the total number of goods that have to be returned to the supplier, which can help them keep track of their inventory and avoid overordering."
+                                    "description": "This calculation is summing up the total number of PnP Goods Returned from all of the PNP Deliveries. This is useful for understanding the total number of items that have been returned within a particular period."
                               },
                               {
                                     "name": "PNP MM Qty CU",
-                                    "expression": "\nSUM('PNP Deliveries'[PNPMMQtyCU])",
+                                    "expression": "\nEVALUATE\n    SUM('PNP Deliveries'[PNPMMQtyCU])",
                                     "displayFolder": "PNP DELIVERIES",
                                     "lineageTag": "106b4b14-f43d-4a6e-b382-9f6889f98859",
                                     "dataType": "double",
@@ -3678,16 +3678,16 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "/SUM('PNP Deliveries'[PNPMMQtySU])\n\nThis calculation finds the ratio of how many packed-to-ship units were included in all deliveries compared to the number of ship-to-store units included in all deliveries. This ratio gives an indication of the proportion of packed-"
+                                    "description": "SUM('PNP Deliveries'[PNPMMQtyCU]) is a calculation that adds up the Quantity in Cubic unit (CU) column of the PNP Deliveries table. This calculation is useful to find the total quantity of a product that has been delivered."
                               },
                               {
                                     "name": "PnP Movement Records",
-                                    "expression": "\nSUM(\n    'PNP Deliveries'[PnPMovementRecords]\n)",
+                                    "expression": "\nSUM('PNP Deliveries'[PnPMovementRecords])",
                                     "formatString": "0",
                                     "displayFolder": "PNP DELIVERIES",
                                     "lineageTag": "ba00a3b6-2933-4129-afd9-ca8fb5abc333",
                                     "dataType": "int64",
-                                    "description": "This calculation sums up all of the records in the column 'PnPMovementRecords' which is part of the 'PNP Deliveries' table. This calculation can be useful to find the total number of items moved in PnP Deliveries."
+                                    "description": "The SUM function calculates the total of a specific column in a given table ('PNP Deliveries'). In this case, it takes the sum of the column named 'PnPMovementRecords' in the table 'PNP Deliveries' and provides a total value."
                               },
                               {
                                     "name": "PNP Qty Received CU",
@@ -3701,11 +3701,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation sums the total quantity of \"PnPQtyReceivedCU\" in the table \"PNP Deliveries\". This will give a total quantity of items received from all delivery records in the table."
+                                    "description": "This calculation is used to sum up the total number of units of product received from a supplier. This could be an important metric for understanding the number of units the business has to work with, either for sale or for production needs."
                               },
                               {
                                     "name": "PnP Qty Returned CU",
-                                    "expression": "\n/SUM('PNP Deliveries'[PnPQtyDeliveredCU])\n\nSUM('PNP Deliveries'[PnPQtyReturnedCU]) \n/ SUM('PNP Deliveries'[PnPQtyDeliveredCU])",
+                                    "expression": "\nSUM('PNP Deliveries'[PnPQtyReturnedCU])",
                                     "displayFolder": "PNP DELIVERIES",
                                     "lineageTag": "476d9911-f904-41f2-b73a-6292fbf02b94",
                                     "dataType": "double",
@@ -3715,7 +3715,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "SUM('PNP Deliveries'[PnPQtyReturnedCU]) is a calculation that adds up the number of returns of a particular item for customer orders across all PNP delivery locations. This information is useful to identify how often customers are returning products, and to gauge customer satisfaction levels."
+                                    "description": "The calculation is used to determine the total quantity of a product returned by customers from a specific store. It adds up the quantity of returned products from the PNP Deliveries table."
                               },
                               {
                                     "name": "PNP SAP Qty EDI CU",
@@ -3729,11 +3729,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is finding the total quantity of PNP Bread sold. It is summing up the quantity sold in each EDI sale."
+                                    "description": "This calculation is simply adding up the total quantity of PNP Bread in the column QTYEDICU. It is a measure of a certain product inventory in a retail store."
                               },
                               {
                                     "name": "PNP SAP Qty Invoice CU",
-                                    "expression": "\nSUM('PNP BREAD'[VALUEINVOICE])",
+                                    "expression": "\nSUM( 'PNP BREAD'[VALUEINVOICE] )",
                                     "displayFolder": "PNP BREAD History/Live",
                                     "lineageTag": "6f89896e-6a86-4284-87df-f0d35b3768c5",
                                     "dataType": "double",
@@ -3743,11 +3743,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "calculated across PNP BREAD[REGION]\n\nThis calculation calculates the total value of all invoices for the PNP BREAD company across all regions."
+                                    "description": "This calculation is used to sum up the values on invoices for 'PNP BREAD'. It adds all of the values from each invoice to get a total value for the company."
                               },
                               {
                                     "name": "PNP SAP Qty Next Day EDI CU",
-                                    "expression": "\nCALCULATE(\n    SUM('PNP BREAD'[QTYEDICU]),\n    'PNP BREAD'[DATE] = 'PNP BREAD'[DATE] + 1\n)",
+                                    "expression": "\nCALCULATE(\n    SUM('PNP BREAD'[QTYEDICU]),\n    'PNP BREAD'[DATE] = 'PNP BREAD'[DATE]+1\n)",
                                     "displayFolder": "PNP BREAD History/Live",
                                     "lineageTag": "e44adb78-4b43-4d4f-9054-dc7508258cc1",
                                     "dataType": "double",
@@ -3757,7 +3757,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation sums the quantity of PNP BREAD sold on the day one day after the current date. In other words, it calculates the amount of PNP BREAD sold on the day after the day the report is being created."
+                                    "description": "This calculation sums the quantity in the \"PNP BREAD\" table with a date one day ahead of the specified date. This calculation can be used to compare quantities between different days and track changes in the data."
                               },
                               {
                                     "name": "PNP SAP Qty Order CU",
@@ -3771,7 +3771,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation presents the total quantity of product units that were sold from the 'PNP BREAD' merchandise category. The result is the sum total of product units sold from the PNP BREAD category."
+                                    "description": "This calculation is used to total up the quantity of the PNP BREAD product that is sold in stores. It looks at the QTYSOCU column in the 'PNP BREAD' table and adds up all of the values in that column."
                               },
                               {
                                     "name": "PNP VALUE EDI",
@@ -3785,7 +3785,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "/SUM('PNP BREAD'[QTYDI])\n\nThis calculation takes the value of all transactions for the product 'PNP BREAD' and divides it by the total quantity of those transactions. This result is the average transaction value for that product."
+                                    "description": "This calculation sums up the value of the \"PNP BREAD\" column labelled \"VALUEDI\". It is a way to quickly find out the total value of items in the \"PNP BREAD\" column."
                               },
                               {
                                     "name": "PNP VALUE INVOICE",
@@ -3799,7 +3799,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "The SUM function is used to calculate the total value of the invoice from the 'PNP BREAD' table. In other words, it calculates the sum of all values for the 'VALUEINVOICE' column in the table."
+                                    "description": "The calculation SUM('PNP BREAD'[VALUEINVOICE]) is adding together the values in the VALUEINVOICE column in the PNP BREAD table. In simple terms, it is summing up all the amounts invoiced from PNP BREAD."
                               },
                               {
                                     "name": "PNP VALUE ORDER",
@@ -3813,11 +3813,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "The calculation SUM('PNP BREAD'[ORDERVALUE]) is used to calculate the total order value for PNP BREAD. It adds up all the individual order values to give the total amount spent. This can be used to measure the total business performance of PNP BREAD."
+                                    "description": "This calculation is adding up the total OrderValue of all items in the PNP BREAD table. This would give the total OrderValue of all items within the PNP BREAD table. This calculation can then be used to determine the overall performance of the PNP BREAD items."
                               },
                               {
                                     "name": "PNP Value Till incl Vat",
-                                    "expression": "\nSUM( 'PNP BREAD'[VALUEINCLVAT] )",
+                                    "expression": "\nSUM('PNP BREAD'[VALUEINCLVAT])",
                                     "displayFolder": "PNP BREAD History/Live",
                                     "lineageTag": "601307e1-6a66-401d-a463-b81af104e941",
                                     "dataType": "double",
@@ -3827,11 +3827,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "The calculation SUM('PNP BREAD'[VALUEINCLVAT]) is used to sum up all the value including VAT of the PNP BREAD items. This calculation gives us the total value of all the PNP BREAD items, including any applicable value added tax."
+                                    "description": "This calculation is used to sum the total value of all the items for the PNP Bread product line, including VAT. It helps to determine the overall financial performance of the product line."
                               },
                               {
                                     "name": "SHR SAP Qty EDI CU",
-                                    "expression": "\nSUM('TEG BREAD'[QTYEDICU])",
+                                    "expression": "\nSUM('TEG BREAD'[QTYEDICU]) \n\n--> SUM('TEG BREAD'[QTYEDICU])",
                                     "displayFolder": "SHOPRITE BREAD History/Live",
                                     "lineageTag": "f566aaeb-c2c6-4620-9311-d2e2ce18158a",
                                     "dataType": "double",
@@ -3841,7 +3841,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is simply taking the total of all the quantities for the item 'TEG BREAD' from the EDICU, summing them up, and giving you a single quantity value. This can be useful in inventory management and forecasting future needs of the item in question."
+                                    "description": "This calculation is summing up the total quantity of TEG BREAD products that have been shipped. This would be useful to determine how many of these products have been sold or shipped."
                               },
                               {
                                     "name": "SHR SAP Qty Invoice CU",
@@ -3855,11 +3855,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is doing a sum of the value of each invoice for the TEG BREAD company. This calculation is important for providing an accurate summary of the revenue for TEG BREAD."
+                                    "description": "SUM('TEG BREAD'[VALUEINVOICE]) is a calculation that adds together all of the values in the ValueInvoice column in the TEG BREAD table. This can be used to determine the total value of all of the invoices within the TEG BREAD table."
                               },
                               {
                                     "name": "SHR SAP Qty Next Day EDI CU",
-                                    "expression": "\nCALCULATE\n    (SUM('TEG BREAD'[QTYEDICU]), \n    'TEG BREAD'[DATE] = 'TEG BREAD'[DATE] + 1)",
+                                    "expression": "\nCALCULATE(\n    SUM('TEG BREAD'[QTYEDICU]),\n    'TEG BREAD'[DATE] = 'TEG BREAD'[DATE] + 1\n)",
                                     "displayFolder": "SHOPRITE BREAD History/Live",
                                     "lineageTag": "cf967398-d2de-445e-941f-52c39f964895",
                                     "dataType": "double",
@@ -3869,7 +3869,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is taking the sum of all quantity of TEG BREAD that was shipped currently and adding it to the sum of all TEG BREAD shipped the previous day.It is a way to compare the quantities of TEG BREAD shipped over two consecutive days."
+                                    "description": "This calculation sums the quantity of items edicured from the TEG BREAD table from the date prior to the date entered into the table."
                               },
                               {
                                     "name": "SHR SAP Qty Order CU",
@@ -3883,7 +3883,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is calculating the sum of the quantity sold for the product \"TEG BREAD\". The quantity for each sale is stored in the field \"QTYSOCU\", and this calculation is adding up all of those values to come up with a total quantity sold for the product."
+                                    "description": "SUM('TEG BREAD'[QTYSOCU]) is a calculation that adds up the amount of units sold in the TEG BREAD table. It could be used to measure the total quantity of units sold for a particular product over a period of time."
                               },
                               {
                                     "name": "SHR VALUE EDI",
@@ -3897,7 +3897,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is used to find the total value of all orders placed for the product TEG BREAD. It takes the VALUEDI column in the TEG BREAD table and adds all of the values in the column to get the total."
+                                    "description": "/ DISTINCTCOUNT('TEG BREAD'[SALES]\n\nThis calculation is finding the average value of sales from the TEG BREAD table. It adds up all the sales values (VALUEDI) for TEG BREAD, and then divides that by the number of"
                               },
                               {
                                     "name": "SHR VALUE INVOICE",
@@ -3911,7 +3911,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is adding all of the values in the ValueInvoice column of the TEG BREAD table. It can be used to calculate the total value of invoices for that table."
+                                    "description": "This calculation is adding up all the values that appear in the \"Value Invoice\" column of the \"TEG BREAD\" table. This is a common calculation used in the business world to get the total value of an invoice or order."
                               },
                               {
                                     "name": "SHR VALUE ORDER",
@@ -3925,11 +3925,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "SUM('TEG BREAD'[ORDERVALUE]) is a calculation in DAX which adds up all of the order values placed by the company TEG BREAD. It's a simple way to calculate the total amount of orders TEG BREAD has placed."
+                                    "description": "This calculation is summing up the total value of all orders in the table 'TEG BREAD'. This figure is the sum of all the individual order values and can be used to measure the overall sales performance generated by the table."
                               },
                               {
                                     "name": "SHR Value Till incl Vat",
-                                    "expression": "\nSUM('TEG BREAD'[VALUEINCLVAT])",
+                                    "expression": "\nSUM(\n    'TEG BREAD'[VALUEINCLVAT]\n)",
                                     "displayFolder": "SHOPRITE BREAD History/Live",
                                     "lineageTag": "54c919ae-8a51-42e0-84fc-ffd0c046354e",
                                     "dataType": "double",
@@ -3939,7 +3939,7 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is summing up the value of all items in the table 'TEG BREAD', including any value added taxes that may have been applied. This value can be used to identify the total amount of money spent on the items in the table."
+                                    "description": "SUM('TEG BREAD'[VALUEINCLVAT]) is a calculation that adds up all the values of the VALUEINCLVAT column from the TEG BREAD table. This is typically used to determine the total value of a group of items, such as the total value of"
                               },
                               {
                                     "name": "Article Count",
@@ -3948,7 +3948,7 @@
                                     "displayFolder": "Executrac",
                                     "lineageTag": "eddbc01a-d8cc-49d8-af5c-ad070643ced3",
                                     "dataType": "int64",
-                                    "description": "This calculation returns the number of unique SAP material numbers that appear in the Executrac table. This could be useful for ensuring accurate inventory quantities, or analyzing the types of materials that are in demand."
+                                    "description": "DISTINCTCOUNT(Executrac[SAP_material_number]) is a calculation that counts the unique values in the column SAP_material_number. This calculation is useful when making decisions based on the number of different materials available in the Executrac dataset."
                               },
                               {
                                     "name": "Penalty Category",
@@ -3957,16 +3957,16 @@
                                     "displayFolder": "Executrac",
                                     "lineageTag": "ab1f4412-8993-4577-a755-19e0fc6e6be6",
                                     "dataType": "int64",
-                                    "description": "SUM(Executrac[Executrac_GAP_by_Sub_Cat]) is a calculation which sums up the differences between the desired performance metric of a given sub-category of Executrac, and the actual performance metric. This calculation helps to identify and measure gaps between the desired and"
+                                    "description": "This calculation is adding up the Executrac GAP by Sub Category for each row in the Executrac table. This calculation is useful for getting the total GAP for each Sub Category, which is useful for understanding the amount of improvement that needs to be made in a certain area."
                               },
                               {
                                     "name": "Penalty Pack Size",
-                                    "expression": "\nSUM(Executrac[Executrac_GAP_by_Pack_Size]) \n\n--\nSUM(Executrac[Executrac_GAP_by_Pack_Size])",
+                                    "expression": "\nSUM(Executrac[Executrac_GAP_by_Pack_Size])",
                                     "formatString": "0",
                                     "displayFolder": "Executrac",
                                     "lineageTag": "8792d5e8-9713-4002-80bf-92a7820b2043",
                                     "dataType": "int64",
-                                    "description": "This calculation is used to sum up the \"Executrac GAP by Pack Size\" values for one or more products. This value represents the difference between the current stock level and the optimal stock level, which is used to determine the amount of stock that needs to be adjusted to ensure the ideal stock level."
+                                    "description": "This calculation takes all of the values in the Executrac_GAP_by_Pack_Size column of the Executrac table and adds them up to give a total number. This number represents the sum of the Gaps of all the pack sizes in Executrac. The result of this calculation"
                               },
                               {
                                     "name": "Penalty SKU",
@@ -3975,7 +3975,7 @@
                                     "displayFolder": "Executrac",
                                     "lineageTag": "421e881e-dd88-404e-b171-b19bf87a3646",
                                     "dataType": "int64",
-                                    "description": "The SUM function is used to calculate the sum of a column in Executrac called Executrac_GAP_by_SKU. This number represents the overall gap between the quantity supplied and the quantity demanded, by SKU across several stores. This can help to identify and quantify supply and demand discrepancies"
+                                    "description": "This calculation is the summation of the gap between actual and budgeted sales of a particular SKU (stock keeping unit) in the Executrac database. It gives the manager an idea of the total gap between budget and actual sales across all SKUs."
                               },
                               {
                                     "name": "StoreCount",
@@ -3984,11 +3984,11 @@
                                     "displayFolder": "Executrac",
                                     "lineageTag": "37a71f4d-e4ba-401a-b246-6a2efa52f615",
                                     "dataType": "int64",
-                                    "description": "DISTINCTCOUNT(Executrac[Store_ID]) is calculating the total number of unique stores in the Executrac table. This is useful information because it tells the company how many unique stores they have in their system and how many they need to track."
+                                    "description": "DISTINCTCOUNT(Executrac[Store_ID]) Calculates the number of unique store IDs in the Executrac table. This metric can be useful in understanding how many stores are within a certain geographic region, allowing for better allocation of resources."
                               },
                               {
                                     "name": "PNP QTYTILLKGPC",
-                                    "expression": "\n/\n\nSUM(PNP_STORE_CORE_Combine[QTYTILLKGPC]) /",
+                                    "expression": "\nSUM(\n    PNP_STORE_CORE_Combine[QTYTILLKGPC]\n)",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "b9fd57ca-be12-4639-9f10-86f1f48b4d2d",
                                     "dataType": "int64",
@@ -3998,11 +3998,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "/SUM(PNP_STORE_CORE_Combine[TRXQTY])\n\nThe calculation is the sum of the quantity of the item till in kilograms divided by the sum of the total transaction quantity of the item. This calculation provides a ratio to understand how much of the item was purchased"
+                                    "description": "This calculation is adding up the total quantity of products (in kilograms per piece) sold in a particular store. It is used to get an indication of how much of a particular product was sold in that store."
                               },
                               {
                                     "name": "SHR QTYTILLKGPC",
-                                    "expression": "\nSUM(SHOPRITE_CORE_SKU_Combine[QTYTILLKGPC])",
+                                    "expression": "\nSUM( SHOPRITE_CORE_SKU_Combine[QTYTILLKGPC] )",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "ea1a7bcc-fed5-4317-9e3d-3336c621a3b0",
                                     "dataType": "double",
@@ -4012,11 +4012,11 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation is used to sum the quantity of items of a particular SKU from the Shoprite Core SKU Combine table. Essentially, it adds up all of the items of that SKU in the table to get the total quantity."
+                                    "description": "This calculation takes the sum of the \"Quantity Till KG Per Customer\" field from the Shoprite Core SKU Combine table. This metric tracks the total number of kilograms of a product that each customer buys over the time period being tracked. This metric can be used to track how much of a certain product a"
                               },
                               {
                                     "name": "SHR QTYTILLCU (42 Days)",
-                                    "expression": "\nCALCULATE(\n    SUM(SHOPRITE_CORE_SKU_Combine[QTYTILLCU]), \n    'Dim Date'[DATE_SQL] >= 'Dim Date'[DATE_SQL] - 42\n)",
+                                    "expression": "\nCALCULATE(\n    SUM(SHOPRITE_CORE_SKU_Combine[QTYTILLCU]),\n    'Dim Date'[DATE_SQL] >= 'Dim Date'[DATE_SQL] - 42\n)",
                                     "displayFolder": "SHOPRITE",
                                     "lineageTag": "39aff278-9191-425c-a89a-d82c94594424",
                                     "dataType": "double",
@@ -4026,16 +4026,16 @@
                                                 "value": "{\"isGeneralNumber\":true}"
                                           }
                                     ],
-                                    "description": "This calculation will calculate the sum of the quantity from the Shoprite Core SKU Combine table over the past 42 days (the current date and the previous 41 days)."
+                                    "description": "This calculation is summing together the quantity of sales of all Shoprite Core SKUs over the prior 42 days. This helps us to measure how sales are trending over that period of time."
                               },
                               {
                                     "name": "PNP QTYTILLCU (42 Days)",
-                                    "expression": "\nCALCULATE(\n    SUM(PNP_STORE_CORE_Combine[QTYTILLCU]),\n    FILTER(\n        'Dim Date',\n        'Dim Date'[DATE_SQL] >= 'Dim Date'[DATE_SQL] - 42\n    )\n)",
+                                    "expression": "\nCALCULATE(\n    SUM(PNP_STORE_CORE_Combine[QTYTILLCU]),\n    'Dim Date'[DATE_SQL] >= 'Dim Date'[DATE_SQL] - 42\n)",
                                     "formatString": "0",
                                     "displayFolder": "PNP Measures",
                                     "lineageTag": "3377654b-1311-4987-8e18-b0cd1098785f",
                                     "dataType": "int64",
-                                    "description": "This calculation is finding the sum of the quantity till current date, but only for the last 42 days. The quantity till current date is stored in the PNP_STORE_CORE_Combine[QTYTILLCU] column. The start date is determined to be 42 days before the current"
+                                    "description": "This calculation is calculating the total quantity of a product sold in the last 42 days (from the current day). It is utilizing the QTYTILLCU field, which holds the quantity of the product sold in each day and the DATE_SQL field in the Dim Date table to determine which days are being"
                               }
                         ],
                         "annotations": [
@@ -4111,9 +4111,9 @@
                                           "expression": [
                                                 "let",
                                                 "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i45WCkrMS09NUdJRMlSK1YlW8ssvUYALGSnFxgIA\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [RangingStatus = _t, RangingStatusOrder = _t]),",
-                                                "    //\"Changed Type\" is a function that transforms the data type of two columns in the source table, \"RangingStatus\" to text and \"RangingStatusOrder\" to an integer type.",
+                                                "    //This statement changes the type of the \"RangingStatus\" column from its current type to text, and the \"RangingStatusOrder\" column from its current type to a 64-bit integer.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"RangingStatus\", type text}, {\"RangingStatusOrder\", Int64.Type}}),",
-                                                "    //The table's column called \"RangingStatus\" is being renamed to \"Ranging Status\".",
+                                                "    //This statement renames the column \"RangingStatus\" to \"Ranging Status\" in a table.",
                                                 "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"RangingStatus\", \"Ranging Status\"}})",
                                                 "in",
                                                 "    #\"Renamed Columns\""
@@ -4201,9 +4201,9 @@
                                           "expression": [
                                                 "let",
                                                 "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i45W8ssvUQhKzEtPTVHSUTJRitWJVoJwFTSKS/KTsxXy8xQyEvNSFMozSzLyS0sUihNzUos1gYqNUBXn56QogOT1QUR+mgJYN0idMYo6kDEIMwyVYmMB\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [CombinedStatusGroup = _t, CombinedStatusGroupSortOrder = _t]),",
-                                                "    //This code changes the data type of two columns in a table from their original types to text and integer, respectively.",
+                                                "    //\"Changed Type\" is a transformation that changes the data types of two columns in a source table to text and integer, respectively.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"CombinedStatusGroup\", type text}, {\"CombinedStatusGroupSortOrder\", Int64.Type}}),",
-                                                "    //This sentence renames the \"CombinedStatusGroup\" column to \"Combined Status Group\" in a table.",
+                                                "    //This renames the column \"CombinedStatusGroup\" to \"Combined Status Group\" in a table.",
                                                 "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"CombinedStatusGroup\", \"Combined Status Group\"}})",
                                                 "in",
                                                 "    #\"Renamed Columns\""
@@ -4751,7 +4751,7 @@
                                                 "let",
                                                 "    Source = Sql.Database(\"apacanzsynapsewsprd.sql.azuresynapse.net\", \"SSAReportingDb\"),",
                                                 "    dbo_PnPDeliveries = Source{[Schema=\"dbo\",Item=\"vw_PnPDeliveries_Self_Serve\"]}[Data],",
-                                                "    //This line of code will convert the \"Date\" column in the \"dbo_PnPDeliveries\" table to a Date type.",
+                                                "    //This code changes the data type of the \"Date\" column in the \"dbo_PnPDeliveries\" table to a date type.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(dbo_PnPDeliveries,{{\"Date\", type date}})",
                                                 "in",
                                                 "    #\"Changed Type\""
@@ -5077,7 +5077,7 @@
                                                 "let",
                                                 "    Source = Sql.Database(\"apacanzsynapsewsprd.sql.azuresynapse.net\", \"SSAReportingDb\"),",
                                                 "    dbo_DimDate = Source{[Schema=\"dbo\",Item=\"DimDate\"]}[Data],",
-                                                "    //This sentence means that the columns labeled 0CALWEEK, ZWEEKNUM, ZDAYNUM, 0WEEKDAY1, and 0CALYEAR are being removed from the table dbo_DimDate.",
+                                                "    //This sentence removes the columns 0CALWEEK, ZWEEKNUM, ZDAYNUM, 0WEEKDAY1, and 0CALYEAR from the table DimDate.",
                                                 "    #\"Removed Columns\" = Table.RemoveColumns(dbo_DimDate,{\"0CALWEEK\", \"ZWEEKNUM\", \"ZDAYNUM\", \"0WEEKDAY1\", \"0CALYEAR\"})",
                                                 "in",
                                                 "    #\"Removed Columns\""

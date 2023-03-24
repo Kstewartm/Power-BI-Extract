@@ -95,12 +95,12 @@
 ****
 
 ## ✔ Package Description
-### PyPbitAutomator
-    - Created a python package for the given python script and published it on https://test.pypi.org/
+### PyPbitExtractor
+    - Created a python package for the given python script and published it on https://pypi.org/
 
 ### Package Usage
 ```
-- from PyPbitAutomator import Extractor
+- from PyPbitExtractor import Extractor
     - This command will install all the uninstalled required libraries used in script.
 - Extractor.api()
     - This command will prompt user for Open API Secret Key.
@@ -110,5 +110,5 @@
 
 ### Package Installation
 ```bash
-pip install -i https://test.pypi.org/simple/ PyPbitAutomator==0.1.2
+pip install PyPbitExtractor
 ```

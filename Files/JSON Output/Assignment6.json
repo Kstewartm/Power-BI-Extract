@@ -338,15 +338,15 @@
                                                 "let",
                                                 "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\MAQ\\Downloads\\Problem Set 6\\Financial Data.xlsx\"), null, true),",
                                                 "    FinancialData_Table = Source{[Item=\"FinancialData\",Kind=\"Table\"]}[Data],",
-                                                "    //\"Changed Type\" is a command to change the data type of each column in the FinancialData_Table to the specified type.",
+                                                "    //\"Changed Type\" is a command that changes the data types of specified columns in the FinancialData_Table to text, number, date, and integer, respectively.",
                                                 "    #\"Changed Type\" = Table.TransformColumnTypes(FinancialData_Table,{{\"Segment\", type text}, {\"Country\", type text}, {\"Product\", type text}, {\"Discount Band\", type text}, {\"Units Sold\", type number}, {\"Manufacturing Price\", Int64.Type}, {\"Sale Price\", Int64.Type}, {\"Gross Sales\", type number}, {\"Discounts\", type number}, {\" Sales\", type number}, {\"COGS\", type number}, {\"Profit\", type number}, {\"Date\", type date}}),",
-                                                "    //The table's \"COGS\" column has been renamed to \"Cost\".",
+                                                "    //This statement renames the existing column called \"COGS\" to \"Cost\" in the table \"Changed Type\".",
                                                 "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"COGS\", \"Cost\"}}),",
-                                                "    //This means the types of columns Profit, Cost, Sales, Gross Sales, Discounts, Date and Units Sold are changed to Currency, Date and Integer types respectively.",
+                                                "    //This changes the type of some columns in the table to currencies, dates, and integers.",
                                                 "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Renamed Columns\",{{\"Profit\", Currency.Type}, {\"Cost\", Currency.Type}, {\" Sales\", Currency.Type}, {\"Gross Sales\", Currency.Type}, {\"Discounts\", Currency.Type}, {\"Date\", type date}, {\"Units Sold\", Int64.Type}}),",
-                                                "    //\"Added Custom\" adds a new column to the table called \"Total Cost\" which is the sum of the two existing columns \"Cost\" and \"Discounts\".",
+                                                "    //The \"Added Custom\" step adds a new column to a previously changed table which calculates the total cost by adding the cost and discounts columns.",
                                                 "    #\"Added Custom\" = Table.AddColumn(#\"Changed Type1\", \"Total Cost\", each [Cost] + [Discounts]),",
-                                                "    //This sentence changes the data type of the column \"Total Cost\" to the currency type in the table \"Added Custom.\"",
+                                                "    //This sentence changes the data type of the column \"Total Cost\" to a currency type within the dataset \"#Added Custom\".",
                                                 "    #\"Changed Type2\" = Table.TransformColumnTypes(#\"Added Custom\",{{\"Total Cost\", Currency.Type}})",
                                                 "in",
                                                 "    #\"Changed Type2\""
@@ -357,7 +357,7 @@
                         "measures": [
                               {
                                     "name": "SalesMTD",
-                                    "expression": "\nTOTALMTD(\n    SUM (FinancialData[Sales]), \n    DATESMTD('FinancialData'[Date])\n)",
+                                    "expression": "\nTOTALMTD(\n    SUM(FinancialData[Sales]),\n    DATESMTD('FinancialData'[Date])\n)",
                                     "formatString": "\\$#,0.###############;(\\$#,0.###############);\\$#,0.###############",
                                     "lineageTag": "f9dc0045-dc05-45d2-b719-8416d74a3d59",
                                     "dataType": "decimal",
@@ -367,11 +367,11 @@
                                                 "value": "{\"currencyCulture\":\"en-US\"}"
                                           }
                                     ],
-                                    "description": "This calculation is finding the total Sales amount for the month-to-date (MTD). The TOTALMTD function totals the sum of the Sales column in the FinancialData table, while the DATESMTD function looks at the Date column in the FinancialData table to only consider the sales that have occurred"
+                                    "description": "This calculation sums up the total sales for the current month to date (MTD) for the given financial data by understanding the differences in dates. It takes the sum of the sales figures and the corresponding dates from the financial data to determine the current month to date total."
                               },
                               {
                                     "name": "SalesQTD",
-                                    "expression": "\nTOTALQTD(\n    SUM(FinancialData[Sales]), \n    DATESQTD('FinancialData'[Date])\n)",
+                                    "expression": "\nTOTALQTD(\n    SUM(FinancialData[Sales]),\n    DATESQTD('FinancialData'[Date])\n)",
                                     "formatString": "\\$#,0.###############;(\\$#,0.###############);\\$#,0.###############",
                                     "lineageTag": "27865c16-b22e-434f-bdb4-25c42ff55c1f",
                                     "dataType": "decimal",
@@ -381,11 +381,11 @@
                                                 "value": "{\"currencyCulture\":\"en-US\"}"
                                           }
                                     ],
-                                    "description": "This calculation will return the total amount of sales up to and including the current quarter of the given year in the 'FinancialData' table. The sum of the sales from the FinancialData table will be taken and then filtered by the specific dates from the current quarter. The result of this calculation is the total"
+                                    "description": "This calculation totals the sales from the FinancialData table for the current quarter up to the date specified in the Date column. It is useful for getting an understanding of how the business is performing in a given quarter up to a particular point in time."
                               },
                               {
                                     "name": "SalesYTD",
-                                    "expression": "\nTOTALYTD ( \n    SUM ( FinancialData[Sales] ), \n    DATESYTD ( 'FinancialData'[Date] ) \n)",
+                                    "expression": "\nTOTALYTD(\n    SUM(FinancialData[ Sales ]),\n    DATESYTD('FinancialData'[Date])\n)",
                                     "formatString": "\\$#,0.###############;(\\$#,0.###############);\\$#,0.###############",
                                     "lineageTag": "09827d76-6154-4cb0-9357-0f5f82702f1a",
                                     "dataType": "decimal",
@@ -395,11 +395,11 @@
                                                 "value": "{\"currencyCulture\":\"en-US\"}"
                                           }
                                     ],
-                                    "description": "This calculation sums the total sales from the current year up to date from the FinancialData table. It takes into account the date and only counts sales from the present year."
+                                    "description": "This calculation is for calculating the total year-to-date sales from a given date. It adds up all of the sales from the current year up until the specified date from the 'FinancialData' table and stores it in a total year-to-date sales amount."
                               },
                               {
                                     "name": "Previous Month Sales MTD",
-                                    "expression": "\nCALCULATE(\n    SUM(FinancialData[Sales]),\n    PARALLELPERIOD(\n        DATESMTD(FinancialData[Date].[Date]), \n        -1,\n        MONTH\n    )\n)",
+                                    "expression": "\nCALCULATE(\n    SUM(FinancialData[Sales]),\n    PARALLELPERIOD(\n        DATESMTD(FinancialData[Date].[Date]),\n        -1, \n        MONTH\n    )\n)",
                                     "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
                                     "lineageTag": "05fbac85-785c-4b5c-9212-7b6d1f5399c4",
                                     "dataType": "decimal",
@@ -413,11 +413,11 @@
                                                 "value": "[\"FormatString\"]"
                                           }
                                     ],
-                                    "description": "This calculation finds the total sales for the current month-to-date (MTD), as well as the sales for the same time period in the previous month. It does this by using the Parallel Period function to change the date context of the total sales being calculated."
+                                    "description": "This calculation takes the sum of sales during the current month-to-date period, and then subtracts the sum of sales from the preceding period. This allows us to compare the current performance to the previous period, providing insight into the sales trend."
                               },
                               {
                                     "name": "Previous Quarter Sales QTD",
-                                    "expression": "\nCALCULATE(\n    SUM(FinancialData[Sales]),\n    DATESYTD(\n        PARALLELPERIOD(\n            FinancialData[Date].[Date],\n            -1,\n            QUARTER\n        )\n    )\n)",
+                                    "expression": "\nCALCULATE( \n    SUM(FinancialData[Sales]), \n    DATESYTD( \n        PARALLELPERIOD(\n            FinancialData[Date].[Date], \n            -1, \n            QUARTER\n        ) \n    )\n)",
                                     "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
                                     "lineageTag": "f99e1b36-bd2b-43a4-ba41-f32eab3a41dd",
                                     "dataType": "decimal",
@@ -431,11 +431,11 @@
                                                 "value": "[\"FormatString\"]"
                                           }
                                     ],
-                                    "description": "This calculation is getting the total sum of sales for the current year, but only for the same quarter as the previous year. For example, if the current day was in the 3rd Quarter, this calculation would get the total sales for the 3rd Quarter of the current year and the 3rd Quarter of the"
+                                    "description": "This calculation calculates the sum of sales from the start of the same quarter of the previous year's date, until the current date. This calculation is useful to compare year-over-year sales trends, or to calculate quarter-over-quarter sales growth."
                               },
                               {
                                     "name": "Month(%)",
-                                    "expression": "\n(\n    [Previous Month Sales MTD] - [SalesMTD]\n) / [Previous Month Sales MTD]",
+                                    "expression": "\n(Previous Month Sales MTD - SalesMTD) / Previous Month Sales MTD",
                                     "formatString": "0.00%;-0.00%;0.00%",
                                     "lineageTag": "f0482eb3-1190-4995-8e45-533dc1849990",
                                     "dataType": "double",
@@ -445,11 +445,11 @@
                                                 "value": "[\"FormatString\"]"
                                           }
                                     ],
-                                    "description": "This calculation calculates the percentage change in monthly sales from one month to the previous month. It is found by subtracting the current month's total sales from the previous month's total sales and then dividing by the previous month's total sales."
+                                    "description": "This calculation is used to find the percentage change in monthly sales from the previous month. It takes the current month's sales MTD subtracts the sales MTD from the previous month and then divides it by the previous month's sales MTD. This gives a percentage change of current month's sales MTD relative"
                               },
                               {
                                     "name": "Previous Year Current Month Sales",
-                                    "expression": "\nCALCULATE (\n    SUM ( FinancialData[Sales] ),\n    DATESYTD ( SAMEPERIODLASTYEAR ( FinancialData[Date].[Date] ) )\n)",
+                                    "expression": "\nCALCULATE (\n    SUM(FinancialData[Sales]),\n    DATESYTD(SAMEPERIODLASTYEAR(FinancialData[Date].[Date]))\n)",
                                     "formatString": "\\$#,0.00;(\\$#,0.00);\\$#,0.00",
                                     "lineageTag": "ed335399-a227-4f1f-95b4-80ec8b992f75",
                                     "dataType": "decimal",
@@ -463,11 +463,11 @@
                                                 "value": "[\"FormatString\"]"
                                           }
                                     ],
-                                    "description": "This calculation is summing the total sales for the current year to date, compared to the same time period (year to date) in the previous year. The calculation is useful for observing year-over-year growth in sales."
+                                    "description": "This calculation is finding the total sales value for the current year to date (YTD), compared with the same period last year (YTD). The calculation is comparing the sales data this year with the sales data from the same period last year to get an understanding of year-on-year performance."
                               },
                               {
                                     "name": "First Half Year Sales",
-                                    "expression": "\nCALCULATE (\n   SUM (FinancialData[Sales]),\n   DATESBETWEEN (FinancialData[Date],\n                  DATE (2014, 1, 1),\n                  DATE (2014, 6, 31))\n)",
+                                    "expression": "\nCALCULATE(\n    SUM(FinancialData[Sales]),\n    DATESBETWEEN(\n        FinancialData[Date],\n        DATE(2014, 1, 1),\n        DATE(2014, 6, 31)\n    )\n)",
                                     "formatString": "\\$#,0.###############;(\\$#,0.###############);\\$#,0.###############",
                                     "lineageTag": "1f2f0d34-e78d-4d3b-aea2-59f98d799c7d",
                                     "dataType": "decimal",
@@ -477,7 +477,7 @@
                                                 "value": "{\"currencyCulture\":\"en-US\"}"
                                           }
                                     ],
-                                    "description": "This calculation is used to find the sum of sales from a financial data table from January 1st, 2014 to June 30th, 2014. It uses the calculate and sum functions to calculate the total sales value from those dates."
+                                    "description": "This calculation is summing up the total sales from the FinancialData table between the dates of January 1, 2014 and June 31, 2014. This is a useful calculation to calculate how much money was made in a specific time period."
                               }
                         ],
                         "annotations": [
