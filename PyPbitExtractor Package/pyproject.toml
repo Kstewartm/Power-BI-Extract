@@ -18,7 +18,7 @@ name = "PyPbitExtractor"  # Required
 #
 # For a discussion on single-sourcing the version, see
 # https://packaging.python.org/guides/single-sourcing-package-version/
-version = "1.0.1"  # Required
+version = "1.2.0"  # Required
 
 # This is a one-line description or tagline of what your project does. This
 # corresponds to the "Summary" metadata field:
@@ -52,21 +52,23 @@ license = {file = "License.txt"}
 # Note that this is a list of additional keywords, separated
 # by commas, to be used to assist searching for the distribution in a
 # larger catalog.
-keywords = ["Power BI", "OpenAI", "pbit", "JSON", "EXCEL"]  # Optional
+keywords = ["Power BI", "OpenAI", "pbit", "JSON", "EXCEL", "DAX Formatter"]  # Optional
 
 # This should be your name or the name of the organization who originally
 # authored the project, and a valid email address corresponding to the name
 # listed.
 authors = [
-  { name="Akash Rajak", email="aakashrajak02@gmail.com" } # Optional
-]
+  {name="Akash Rajak", email="aakashrajak02@gmail.com"}
+]# Optional
 
 # This should be your name or the names of the organization who currently
 # maintains the project, and a valid email address corresponding to the name
 # listed.
 maintainers = [
-  { name="Akash Rajak", email="aakashrajak02@gmail.com" } # Optional
-]
+  {name="Pragya Gautam", email="pragyagautam020801@gmail.com"},
+  {name="Akash Rajak", email="aakashrajak02@gmail.com" },
+  {name="Ayush Jain", email="jainaayush051@outlook.com" } 
+] # Optional
 
 # Classifiers help users find your project by categorizing it.
 #
@@ -89,11 +91,11 @@ classifiers = [  # Optional
   # that you indicate you support Python 3. These classifiers are *not*
   # checked by "pip install". See instead "python_requires" below.
   "Programming Language :: Python :: 3",
-  #"Programming Language :: Python :: 3.7",
-  #"Programming Language :: Python :: 3.8",
-  #"Programming Language :: Python :: 3.9",
-  #"Programming Language :: Python :: 3.10",
-  #"Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   #"Programming Language :: Python :: 3 :: Only",
 ]
 

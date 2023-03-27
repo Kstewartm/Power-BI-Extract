@@ -8,7 +8,7 @@
 
 ### Purpose:
 - The purpose of our Power BI model documentation automation is to provide a Time-saving and Accurate solution for fetching pbix details. Below are the purpose that our model is fulfilling:
-    - Automating the Power BI model documenter using one of the most efficient GPT-3 architecture i.e. `text-davinci-003`.
+    - Automating the Power BI model documenter using one of the most efficient GPT-3 architecture i.e. `text-davinci-002`.
     - Fetched the `Measures`, `Source Information`, and `Model Relationships` attributes from the Power BI report.
     - Wrote back the Measures and Modification Descriptions and displayed on hovering the respective properties in updated pbit files.
     - Presented the output into three directories, namely `EXCEL`, `JSON` and `Updated PBIT`.
@@ -71,25 +71,6 @@
     - A valid API secret key for OpenAI's NLP capabilities.
     - Python 3.7 or later installed on your machine.
     - Access to the Power BI models that you want to document.
-
-****
-
-### Getting Started:
-- To get started with the solution, follow these steps:
-    - Clone the repository to your local machine.
-    - Run the solution using the Extractor.py file.
-
-****
-
-### Step-by-Step Guide:
-- User just need to download the file, and run the Project.py, on local system.
-- Then user will be provided with following three selection option
-- After selection is done by user, the respective pop up will open for selecting respective option from the local system.
-- Then in the backend the python script will follow the below steps in order to extract details:
-    - Read the pbit file in json format.
-    - then from the json file, using the indexing, it extracted the details like measures, relationships, and the source information.
-    - then for each measure and modification, we got the description of that measures using Open AI API.
-    - After this part is done, then the final extracted details are being stored in three folders namely EXCEL Output, JSON Output and UPDATED pbit.
 
 ****
 ****
