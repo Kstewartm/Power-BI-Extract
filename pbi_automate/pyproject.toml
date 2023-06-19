@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pbi-automate"
+version = "0.1.0"
+description = ""
+authors = ["Kayã Stewart Moura <kayastewart@gmail.com>"]
+readme = "README.md"
+packages = [{include = "pbi_automate"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openpyxl = "^3.1.2"
+pathlib = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
